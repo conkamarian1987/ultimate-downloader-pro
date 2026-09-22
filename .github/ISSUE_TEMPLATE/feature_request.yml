@@ -1,0 +1,23 @@
+name: Návrh funkce
+description: Navrhněte konkrétní zlepšení aplikace.
+title: "[Návrh] "
+labels: ["návrh"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Jaký problém návrh řeší?
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: Navrhované řešení
+      description: Popište očekávané chování z pohledu uživatele.
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Další souvislosti
+
