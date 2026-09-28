@@ -6,6 +6,7 @@ struct MediaSelection: Identifiable { let id = UUID(); let items: [MediaItem]; v
 struct PlayerSelection: Identifiable { var id: String { url.absoluteString }; let url: URL }
 
 struct StudioView: View {
+    @EnvironmentObject private var updates: AppUpdates
     @EnvironmentObject var store: DownloadStore
     @AppStorage("clipboardMonitoring") private var clipboardEnabled = false
     @StateObject private var clipboard = ClipboardMonitor()
@@ -84,7 +85,7 @@ struct StudioView: View {
     private func nav(_ id: String,_ text: String,_ icon: String,badge: Int = 0) -> some View {
         Button { route = id } label: {
             HStack { Image(systemName:icon).frame(width:22); Text(text).font(.system(size:13,weight:.medium)); if badge > 0 { Text("\(badge)").font(.caption.bold()).padding(4).background(accent.opacity(0.2),in:Capsule()) } }
-                .padding(12).foregroundStyle(route == id ? accent : .primary).background(route == id ? accent.opacity(0.12) : .clear,in:RoundedRectangle(cornerRadius:10))
+                .padding(12).contentShape(Rectangle()).foregroundStyle(route == id ? accent : .primary).background(route == id ? accent.opacity(0.12) : .clear,in:RoundedRectangle(cornerRadius:10))
         }.buttonStyle(.plain)
     }
     private var queue: some View {
@@ -128,6 +129,16 @@ struct StudioView: View {
                     ForEach(["yt-dlp","ffmpeg","ffprobe","gallery-dl"],id:\.self) { name in HStack { Image(systemName:ToolPaths.find(name) == nil ? "exclamationmark.circle" : "checkmark.circle.fill").foregroundStyle(ToolPaths.find(name) == nil ? .orange : accent); Text(name).bold(); Spacer(); Text(ToolPaths.find(name) ?? "Nenalezeno").font(.caption).foregroundStyle(secondaryText) } }
                     HStack { Button("Obnovit stav") { store.tools = .current }; Button("Nainstalovat nástroje") { store.maintain(install:true) }.disabled(store.busy); Button("Aktualizovat") { store.maintain(install:false) }.disabled(store.busy); if store.maintenance { ProgressView().controlSize(.small); Button("Zrušit") {store.stopMaintenance()} } }
                     if !store.maintenanceLog.isEmpty { Text(store.maintenanceLog).font(.system(.caption,design:.monospaced)).textSelection(.enabled) }
+                }.padding(12)
+            }
+            GroupBox("Aktualizace aplikace") {
+                VStack(alignment: .leading, spacing: 10) {
+                    Toggle("Automaticky kontrolovat nové verze", isOn: Binding(get: { updates.automaticChecks }, set: { updates.automaticChecks = $0 }))
+                    Toggle("Automaticky stahovat a instalovat aktualizace", isOn: Binding(get: { updates.automaticDownloads }, set: { updates.automaticDownloads = $0 }))
+                        .disabled(!updates.automaticChecks)
+                    Text("Instalace počká na dokončení fronty. Stažené soubory a nastavení zůstanou zachované.").font(.caption).foregroundStyle(secondaryText)
+                    Button("Zkontrolovat aktualizace…") { updates.check() }.disabled(!updates.canCheck)
+                    if !updates.status.isEmpty { Text(updates.status).font(.callout) }
                 }.padding(12)
             }
             GroupBox("Přihlášení ke službám") {
@@ -192,7 +203,7 @@ struct MediaWorkspace: View {
                 if youtube, let playback, active {
                     VStack(alignment:.leading) {
                         HStack { Text(chosen?.title ?? "Přehrávač").font(.headline); Spacer(); Button("Zavřít přehrávač") { self.playback = nil } }
-                        WebPlayer(url:playback).id(playback).frame(height:390)
+                        YouTubePlayer(url:playback).id(playback).frame(height:390)
                             .id("player")
                     }
                 }
@@ -232,6 +243,7 @@ struct MediaWorkspace: View {
                 }
             }.padding(28).frame(maxWidth:1200).frame(maxWidth:.infinity)
         }
+        .onChange(of:playback) { _, url in if url != nil { withAnimation { proxy.scrollTo("player",anchor:.top) } } }
         .onChange(of:chosen) { _, item in if item != nil { withAnimation { proxy.scrollTo(playback == nil ? "options" : "player",anchor:.top) } } }
         }
         .onChange(of:incoming) { _, value in if !value.isEmpty { query = value; incoming = "" } }

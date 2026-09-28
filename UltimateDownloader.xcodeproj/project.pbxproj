@@ -104,6 +104,7 @@
 				<string>000000000000000000000011</string>
 				<string>0000000000000000000001C2</string>
 				<string>000000000000000000000190</string>
+				<string>A10000000000000000000001</string>
 			</array>
 			<key>isa</key>
 			<string>PBXGroup</string>
@@ -138,7 +139,9 @@
 			<key>buildActionMask</key>
 			<integer>2147483647</integer>
 			<key>files</key>
-			<array/>
+			<array>
+				<string>A10000000000000000000002</string>
+			</array>
 			<key>isa</key>
 			<string>PBXFrameworksBuildPhase</string>
 			<key>runOnlyForDeploymentPostprocessing</key>
@@ -190,6 +193,11 @@
 				<string>YES</string>
 				<key>ENABLE_APP_SANDBOX</key>
 				<string>NO</string>
+				<key>FRAMEWORK_SEARCH_PATHS</key>
+				<array>
+					<string>$(inherited)</string>
+					<string>$(PROJECT_DIR)/Frameworks</string>
+				</array>
 				<key>INFOPLIST_FILE</key>
 				<string>Info.plist</string>
 				<key>LD_RUNPATH_SEARCH_PATHS</key>
@@ -229,6 +237,11 @@
 				<string>YES</string>
 				<key>ENABLE_APP_SANDBOX</key>
 				<string>NO</string>
+				<key>FRAMEWORK_SEARCH_PATHS</key>
+				<array>
+					<string>$(inherited)</string>
+					<string>$(PROJECT_DIR)/Frameworks</string>
+				</array>
 				<key>INFOPLIST_FILE</key>
 				<string>Info.plist</string>
 				<key>LD_RUNPATH_SEARCH_PATHS</key>
@@ -310,6 +323,7 @@
 				<string>00000000000000000000000F</string>
 				<string>000000000000000000000010</string>
 				<string>00000000000000000000019B</string>
+				<string>A10000000000000000000004</string>
 			</array>
 			<key>buildRules</key>
 			<array/>
@@ -763,6 +777,58 @@
 			<string>0000000000000000000001C2</string>
 			<key>isa</key>
 			<string>PBXBuildFile</string>
+		</dict>
+		<key>A10000000000000000000001</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>wrapper.framework</string>
+			<key>path</key>
+			<string>Frameworks/Sparkle.framework</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>A10000000000000000000002</key>
+		<dict>
+			<key>fileRef</key>
+			<string>A10000000000000000000001</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>A10000000000000000000003</key>
+		<dict>
+			<key>fileRef</key>
+			<string>A10000000000000000000001</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+			<key>settings</key>
+			<dict>
+				<key>ATTRIBUTES</key>
+				<array>
+					<string>CodeSignOnCopy</string>
+					<string>RemoveHeadersOnCopy</string>
+				</array>
+			</dict>
+		</dict>
+		<key>A10000000000000000000004</key>
+		<dict>
+			<key>buildActionMask</key>
+			<integer>2147483647</integer>
+			<key>dstPath</key>
+			<string></string>
+			<key>dstSubfolderSpec</key>
+			<integer>10</integer>
+			<key>files</key>
+			<array>
+				<string>A10000000000000000000003</string>
+			</array>
+			<key>isa</key>
+			<string>PBXCopyFilesBuildPhase</string>
+			<key>name</key>
+			<string>Embed Frameworks</string>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<integer>0</integer>
 		</dict>
 	</dict>
 	<key>rootObject</key>
