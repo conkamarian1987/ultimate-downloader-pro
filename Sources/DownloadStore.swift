@@ -108,8 +108,53 @@ import UserNotifications
             DispatchQueue.main.async { self?.receive(line, id: job.id) }
         }, completion: { [weak self] code, cancelled in
             if let cookieFile { try? FileManager.default.removeItem(at:cookieFile) }
-            DispatchQueue.main.async { self?.finish(id: job.id, code: code, cancelled: cancelled) }
+            DispatchQueue.main.async { self?.downloadFinished(id: job.id, code: code, cancelled: cancelled) }
         })
+        }
+    }
+    private func downloadFinished(id: UUID, code: Int32, cancelled: Bool) {
+        guard !cancelled, code == 0, let job = jobs.first(where: { $0.id == id }),
+              job.profile.format == "mp4", job.imageOptions == nil, !job.files.isEmpty,
+              let ffmpeg = tools.ffmpeg, let ffprobe = tools.ffprobe else {
+            finish(id: id, code: code, cancelled: cancelled); return
+        }
+        let conversion = ProcessRunner(); runner = conversion
+        if let i = jobs.firstIndex(where: { $0.id == id }) {
+            jobs[i].conversionStage = "Kontrola videa"
+            jobs[i].conversionProgress = nil
+            jobs[i].detail = "Ověřuji a připravuji video pro přehrávač Apple…"
+        }
+        Task {
+            do {
+                for (fileIndex, path) in job.files.enumerated() {
+                    try await AppleVideoCompatibility.prepare(path, ffmpeg: ffmpeg, ffprobe: ffprobe, runner: conversion, progress: { [weak self] progress in
+                        DispatchQueue.main.async {
+                            guard let self, let i = self.jobs.firstIndex(where: { $0.id == id }), self.jobs[i].state == .running else { return }
+                            let prefix = job.files.count > 1 ? "Soubor \(fileIndex + 1)/\(job.files.count) · " : ""
+                            switch progress {
+                            case .checking:
+                                self.jobs[i].conversionStage = "Kontrola videa"
+                                self.jobs[i].conversionProgress = nil
+                                self.jobs[i].detail = prefix + "Kontroluji kompatibilitu videa…"
+                            case .converting(let value):
+                                self.jobs[i].conversionStage = "Převádí se"
+                                self.jobs[i].conversionProgress = value
+                                self.jobs[i].detail = prefix + "Převod pro Apple" + (value.map { " · \(Int($0 * 100)) %" } ?? "…")
+                            case .finalizing:
+                                self.jobs[i].conversionStage = "Dokončuji převod"
+                                self.jobs[i].conversionProgress = nil
+                                self.jobs[i].detail = prefix + "Ověřuji a ukládám výsledné video…"
+                            }
+                        }
+                    }) { [weak self] line in
+                        DispatchQueue.main.async { self?.receive(line, id: id) }
+                    }
+                }
+                finish(id: id, code: 0, cancelled: false)
+            } catch {
+                receive(error.localizedDescription, id: id)
+                finish(id: id, code: 1, cancelled: error is CancellationError)
+            }
         }
     }
     private func receive(_ line: String, id: UUID) {
@@ -134,6 +179,7 @@ import UserNotifications
     }
     private func finish(id: UUID, code: Int32, cancelled: Bool) {
         if let i = jobs.firstIndex(where: { $0.id == id }) {
+            jobs[i].conversionStage = nil; jobs[i].conversionProgress = nil
             if cancelled { jobs[i].state = .cancelled; jobs[i].detail = "Stahování zrušeno. Rozpracované soubory zůstaly pro opakování." }
             else if code == 0 && !jobs[i].files.isEmpty {
                 jobs[i].state = .finished; jobs[i].progress = 1
@@ -152,7 +198,7 @@ import UserNotifications
             jobs[i].state = .cancelled; jobs[i].detail = "Odebráno z fronty"; save()
         }
     }
-    func retry(_ job: DownloadJob) { var copy = job; copy.id = UUID(); copy.state = .queued; copy.progress = 0; copy.files = []; copy.log = ""; copy.detail = "Čeká na spuštění"; jobs.insert(copy,at:0); save(); startNext() }
+    func retry(_ job: DownloadJob) { var copy = job; copy.id = UUID(); copy.state = .queued; copy.progress = 0; copy.conversionStage = nil; copy.conversionProgress = nil; copy.files = []; copy.log = ""; copy.detail = "Čeká na spuštění"; jobs.insert(copy,at:0); save(); startNext() }
     func removeFromHistory(_ id: UUID) {
         guard let job = jobs.first(where: { $0.id == id }), job.state != .queued, job.state != .running else { return }
         jobs.removeAll { $0.id == id }

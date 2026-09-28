@@ -1,3 +1,16 @@
+# Změny
+
+## Beta 0.4.0 — sestavení 7 (28. 9. 2026)
+
+- Domovskou obrazovku a levé menu nahrazují horní záložky Z odkazu, YouTube a Fronta.
+- Volby stahování jsou přímo pod odkazem; galerie umožňují jednotlivý i hromadný výběr.
+- YouTube má vlastní vyhledávání, vložený přehrávač a volby stažení.
+- Nastavení je dostupné přes ozubené kolečko, fronta má počet aktivních úloh.
+- Zachované opravy 0.3.2/0.3.3: MP4 kompatibilní s Apple přehrávačem, bezpečné nahrazení jediného výstupního souboru, průběh převodu a finalizace.
+- Verze i číslo sestavení jsou sjednocené v aplikaci, rozšíření a informacích o aplikaci.
+- Univerzální instalační ZIP pro arm64 a x86_64; aktualizovaný návod a SHA-256.
+- GUI a nové screenshoty nejsou dokončeně ověřené kvůli pádu ovládací služby; podrobnosti v README.
+
 # Přehled změn
 
 ## Beta 0.3.1

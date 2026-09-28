@@ -1,9 +1,12 @@
 import SwiftUI
+import AppKit
 
 struct MediaOptionsView: View {
     let items: [MediaItem]
     let folder: String
     var playlistURL: String? = nil
+    var embedded = false
+    var loading = false
     @EnvironmentObject var store: DownloadStore
     @Environment(\.dismiss) private var dismiss
     @StateObject private var details = MediaExplorer()
@@ -34,15 +37,18 @@ struct MediaOptionsView: View {
     }
     var current: MediaItem? { details.items.first ?? items.first }
     var hasImages: Bool { items.contains { $0.kind == .image } }
-    var hasAV: Bool { items.contains { $0.kind != .image } }
+    var hasAV: Bool { items.isEmpty || items.contains { $0.kind != .image } }
     var profiles: [DownloadProfile] { output == "audio" ? DownloadProfile.audio : DownloadProfile.video }
     var variants: [MediaVariant] { current?.variants.filter { output == "audio" ? $0.audioOnly : !$0.audioOnly } ?? [] }
     var body: some View {
+        Group { if embedded { panel } else { ScrollView { panel }.frame(width:700,height:650) } }
+    }
+    private var panel: some View {
         VStack(alignment:.leading,spacing:20) {
-            HStack { VStack(alignment:.leading,spacing:6) { Text(items.count == 1 ? "Přesně podle vás." : "Uložit \(items.count) položek").font(.title.bold()); Text(current?.title ?? "Výběr médií").foregroundStyle(.secondary).lineLimit(2) }; Spacer(); Button("Zavřít") { details.cancel(); dismiss() } }
-            ScrollView {
+            HStack { VStack(alignment:.leading,spacing:6) { Text(items.count == 1 ? "Přesně podle vás." : "Uložit \(items.count) položek").font(.title.bold()); Text(current?.title ?? "Vložte odkaz a načtěte dostupná média").foregroundStyle(.secondary).lineLimit(2) }; Spacer(); if !embedded { Button("Zavřít") { details.cancel(); dismiss() } } }
+            Group {
                 VStack(alignment:.leading,spacing:20) {
-                    GroupBox("Oblíbené profily") {
+                    DisclosureGroup("Oblíbené profily") {
                         VStack(alignment: .leading, spacing: 10) {
                             ForEach(presets) { preset in
                                 HStack {
@@ -69,7 +75,7 @@ struct MediaOptionsView: View {
                             VStack(alignment:.leading,spacing:16) {
                                 Picker("Uložit jako",selection:$output) { Text("Video").tag("video"); Text("Pouze zvuk").tag("audio") }.pickerStyle(.segmented).onChange(of:output) { _,v in if !profiles.contains(where: { $0.id == profileID }) { profileID = v == "audio" ? "mp3-320" : "1080" }; variantID = "auto" }
                                 if output == "video" {
-                                    Picker("Kontejner",selection:$container) { Text("MP4").tag("mp4"); Text("MKV").tag("mkv"); Text("WebM").tag("webm") }
+                                    Picker("Kontejner",selection:$container) { Text("MP4 · Apple / H.264").tag("mp4"); Text("MKV").tag("mkv"); Text("WebM").tag("webm") }
                                     if items.count == 1 && !variants.isEmpty {
                                         Picker("Dostupná stopa",selection:$variantID) { Text("Automaticky podle profilu").tag("auto"); ForEach(variants.reversed()) { Text($0.label).tag($0.id) } }
                                     }
@@ -78,13 +84,13 @@ struct MediaOptionsView: View {
                                 if !trimEnabled, items.count == 1, let languages = current?.subtitles, !languages.isEmpty {
                                     Picker("Titulky jako SRT",selection:$subtitle) { Text("Bez titulků").tag("none"); ForEach(languages,id:\.self) { Text($0).tag($0) } }
                                 }
-                                Text(output == "audio" ? "Převod nemůže zvýšit kvalitu zdrojového zvuku. Datový tok je cílová hodnota." : "Kvalita je horní limit. Stopy se nepřepočítávají na vyšší rozlišení. Kontejner musí podporovat kodeky zdroje; MKV bývá nejuniverzálnější.").font(.caption).foregroundStyle(.secondary)
+                                Text(output == "audio" ? "Převod nemůže zvýšit kvalitu zdrojového zvuku. Datový tok je cílová hodnota." : "Kvalita je horní limit. Stopy se nepřepočítávají na vyšší rozlišení. MP4 se ověří a podle potřeby převede na H.264 / AAC pro přehrávač Apple. Převod může trvat déle. MKV a WebM zachovávají kodeky zdroje.").font(.caption).foregroundStyle(.secondary)
                                 if variants.isEmpty && !details.busy { Text("Zdroj neposkytl seznam variant. Použije se zvolený profil; u přímých souborů bez údajů o rozlišení zvolte nejvyšší dostupnou kvalitu.").font(.caption).foregroundStyle(.orange) }
                             }.padding(12)
                         }
                     }
                     if hasAV {
-                        GroupBox("Časový výřez") {
+                        DisclosureGroup("Časový výřez") {
                             VStack(alignment: .leading, spacing: 10) {
                                 Toggle("Uložit jen část videa nebo zvuku", isOn: $trimEnabled)
                                 if trimEnabled {
@@ -105,12 +111,13 @@ struct MediaOptionsView: View {
                             }.padding(12)
                         }
                     }
-                    Label(folder,systemImage:"folder").font(.caption).foregroundStyle(.secondary).textSelection(.enabled)
+                    HStack { Label(folder,systemImage:"folder").font(.caption).foregroundStyle(.secondary).textSelection(.enabled); Spacer(); Button("Změnit složku…") { let panel = NSOpenPanel(); panel.canChooseDirectories = true; panel.canChooseFiles = false; panel.allowsMultipleSelection = false; if panel.runModal() == .OK, let url = panel.url { UserDefaults.standard.set(url.path,forKey:"destination") } } }
                 }
             }
-            HStack { Text("Soubory se zařadí do společné fronty.").font(.caption).foregroundStyle(.secondary); Spacer(); Button("Přidat do fronty") { enqueue() }.buttonStyle(NeonButtonStyle()).controlSize(.large).disabled(details.busy || enqueued || !validTrim) }
-        }.padding(28).frame(width:700,height:610)
-        .task {
+            HStack { Text("Soubory se zařadí do společné fronty.").font(.caption).foregroundStyle(.secondary); Spacer(); Button(enqueued ? "Přidáno do fronty" : "Stáhnout") { enqueue() }.buttonStyle(NeonButtonStyle()).controlSize(.large).disabled(items.isEmpty || loading || details.busy || enqueued || !validTrim) }
+        }.padding(embedded ? 20 : 28).frame(maxWidth:.infinity,alignment:.leading)
+        .task(id:items) {
+            details.cancel(); details.items = []; details.diagnostics = ""; enqueued = false; variantID = "auto"; subtitle = "none"
             if items.count == 1, playlistURL == nil, let first = items.first {
                 if first.kind == .audio { output = "audio"; profileID = "mp3-320" }
                 if first.kind != .image && !first.direct && first.variants.isEmpty { details.inspect(first.url,service:nil) }
@@ -127,8 +134,8 @@ struct MediaOptionsView: View {
         let selectedVariant = variants.first(where:{$0.id == variantID})
         let profile = output == "video" ? DownloadProfile(id:base.id,title:"\(container.uppercased()) · \(selectedVariant?.label ?? base.title)",format:container,quality:base.quality,suffix:selectedVariant?.id ?? base.suffix) : base
         let selector: String? = output == "video" ? selectedVariant.map { $0.hasAudio ? $0.id : "\($0.id)+bestaudio/\($0.id)" } : nil
-        if let playlistURL { store.enqueue(text:playlistURL,profile:profile,playlist:true,folder:folder,trimStart:start,trimEnd:end); enqueued = true; dismiss(); return }
+        if let playlistURL { store.enqueue(text:playlistURL,profile:profile,playlist:true,folder:folder,trimStart:start,trimEnd:end); enqueued = true; if !embedded { dismiss() }; return }
         store.enqueueMedia(items,profile:profile,selector:selector,subtitles:trimEnabled || subtitle == "none" ? nil : subtitle,imageOptions:ImageOptions(format:imageFormat,maxDimension:dimension),folder:folder,trimStart:start,trimEnd:end)
-        enqueued = true; dismiss()
+        enqueued = true; if !embedded { dismiss() }
     }
 }

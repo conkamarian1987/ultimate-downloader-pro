@@ -84,7 +84,7 @@ struct DeveloperInfoView: View {
             if let url = Bundle.main.url(forResource: "DeveloperPhoto", withExtension: "jpg"), let photo = NSImage(contentsOf: url) {
                 Image(nsImage: photo).resizable().scaledToFill().frame(width: 100, height: 100).clipShape(Circle())
             }
-            Text("Ultimate Downloader Pro · Beta 0.3.1").font(.title3.bold())
+            Text("Ultimate Downloader Pro · Beta \(Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "—") (\(Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "—"))").font(.title3.bold())
             Text("Vývojář: Marian Čonka")
             Link("GitHub: conkamarian1987", destination: URL(string: "https://github.com/conkamarian1987")!)
         }.frame(maxWidth: .infinity).padding(20).tint(.teal)
