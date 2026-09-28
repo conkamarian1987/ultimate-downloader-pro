@@ -9,7 +9,7 @@
 - Zachované opravy 0.3.2/0.3.3: MP4 kompatibilní s Apple přehrávačem, bezpečné nahrazení jediného výstupního souboru, průběh převodu a finalizace.
 - Verze i číslo sestavení jsou sjednocené v aplikaci, rozšíření a informacích o aplikaci.
 - Univerzální instalační ZIP pro arm64 a x86_64; aktualizovaný návod a SHA-256.
-- GUI a nové screenshoty nejsou dokončeně ověřené kvůli pádu ovládací služby; podrobnosti v README.
+- Doplněny skutečné screenshoty všech tří záložek. Koncové GUI testování zůstává neověřené kvůli pádu ovládací služby; podrobnosti v README.
 
 # Přehled změn
 

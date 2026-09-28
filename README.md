@@ -69,7 +69,19 @@ Záložka **Fronta** ukazuje počet čekajících a spuštěných úloh, průbě
 
 ## Obrázky rozhraní
 
-Starší úvodní obrázek byl odstraněn z hlavní prezentace, aby nezobrazoval neaktuální navigaci. Skutečné screenshoty rozhraní 0.4.0 zatím nejsou přiložené: služba pro zachycení a ovládání okna během jejich pořizování opakovaně havarovala a náhradní systémové pořízení snímků zablokovala oprávnění prostředí. Ikona výše není screenshot aplikace.
+Skutečné snímky aplikace Beta 0.4.0 (7).
+
+### Z odkazu — formát a kvalita přímo pod odkazem
+
+![Stahování z odkazu](docs/images/odkaz.png)
+
+### YouTube — vyhledávání a přehrávání
+
+![Vyhledávání YouTube](docs/images/youtube.png)
+
+### Fronta — průběh a historie stahování
+
+![Fronta a historie](docs/images/fronta.png)
 
 ## Potřebné nástroje
 
