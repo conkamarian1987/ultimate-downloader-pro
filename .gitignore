@@ -8,3 +8,9 @@ xcuserdata/
 *.tmp
 .swiftpm/
 
+
+Frameworks/
+.build-tools/
+
+__pycache__/
+*.pyc

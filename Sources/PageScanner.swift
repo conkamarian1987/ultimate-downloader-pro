@@ -84,3 +84,83 @@ struct WebPlayer: NSViewRepresentable {
     func updateNSView(_ view: WKWebView, context: Context) { if view.url == nil { view.load(URLRequest(url:url)) } }
     static func dismantleNSView(_ view: WKWebView, coordinator: ()) { view.stopLoading(); view.loadHTMLString("",baseURL:nil) }
 }
+
+
+/// A video-only YouTube player; login/source browsing continues to use WebPlayer.
+struct YouTubePlayer: View {
+    let url: URL
+    var body: some View {
+        if let id = Self.videoID(url) {
+            EmbeddedYouTubePlayer(videoID: id)
+        } else {
+            ContentUnavailableView("Tento odkaz není odkaz na video", systemImage: "play.slash",
+                                   description: Text("Vyberte konkrétní video z výsledků vyhledávání."))
+        }
+    }
+
+    static func videoID(_ url: URL) -> String? {
+        let host = url.host?.lowercased() ?? ""
+        let parts = url.path.split(separator: "/").map(String.init)
+        let candidate: String?
+        if host == "youtu.be" || host == "www.youtu.be" {
+            candidate = parts.first
+        } else if ["youtube.com", "www.youtube.com", "m.youtube.com", "music.youtube.com", "www.youtube-nocookie.com", "youtube-nocookie.com"].contains(host) {
+            if parts.first == "watch" {
+                candidate = URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems?.first(where: { $0.name == "v" })?.value
+            } else if parts.count == 2 && ["shorts", "embed", "live"].contains(parts[0]) {
+                candidate = parts[1]
+            } else { candidate = nil }
+        } else { candidate = nil }
+        guard let candidate, candidate.range(of: "^[A-Za-z0-9_-]{11}$", options: .regularExpression) != nil else { return nil }
+        return candidate
+    }
+}
+
+private struct EmbeddedYouTubePlayer: NSViewRepresentable {
+    let videoID: String
+    func makeCoordinator() -> Coordinator { Coordinator() }
+    func makeNSView(context: Context) -> WKWebView {
+        let configuration = WKWebViewConfiguration()
+        configuration.mediaTypesRequiringUserActionForPlayback = .all
+        let view = WKWebView(frame: .zero, configuration: configuration)
+        view.navigationDelegate = context.coordinator
+        view.uiDelegate = context.coordinator
+        return view
+    }
+    func updateNSView(_ view: WKWebView, context: Context) {
+        guard context.coordinator.loadedID != videoID else { return }
+        context.coordinator.loadedID = videoID
+        let destination = URL(string: "https://www.youtube.com/embed/\(videoID)?playsinline=1&controls=1&rel=0")!
+        var request = URLRequest(url: destination)
+        // YouTube requires app identification for native WebView embeds (error 153 otherwise).
+        let appID = Bundle.main.bundleIdentifier ?? "cz.ultimate.downloaderpro"
+        request.setValue("https://" + appID.lowercased(), forHTTPHeaderField: "Referer")
+        view.load(request)
+    }
+    static func dismantleNSView(_ view: WKWebView, coordinator: Coordinator) {
+        view.stopLoading()
+        view.navigationDelegate = nil
+        view.uiDelegate = nil
+        view.loadHTMLString("", baseURL: nil)
+    }
+    final class Coordinator: NSObject, WKNavigationDelegate, WKUIDelegate {
+        var loadedID: String?
+        func webView(_ webView: WKWebView, decidePolicyFor action: WKNavigationAction,
+                     decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
+            // Deliberate player links may open separately, never replace the video with a website.
+            if action.navigationType == .linkActivated, let url = action.request.url,
+               action.targetFrame?.isMainFrame != false {
+                if ["https", "http"].contains(url.scheme ?? "") { NSWorkspace.shared.open(url) }
+                decisionHandler(.cancel)
+                return
+            }
+            decisionHandler(.allow)
+        }
+        func webView(_ webView: WKWebView, createWebViewWith configuration: WKWebViewConfiguration,
+                     for action: WKNavigationAction, windowFeatures: WKWindowFeatures) -> WKWebView? {
+            if action.navigationType == .linkActivated, let url = action.request.url,
+               ["https", "http"].contains(url.scheme ?? "") { NSWorkspace.shared.open(url) }
+            return nil
+        }
+    }
+}

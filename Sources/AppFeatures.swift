@@ -113,3 +113,81 @@ struct SavedMediaPreset: Codable, Identifiable {
     var imageFormat: String
     var dimension: Int
 }
+
+import Sparkle
+import Combine
+
+/// Keeps installation out of the download queue, including a paused queue.
+@MainActor final class AppUpdates: NSObject, ObservableObject, SPUUpdaterDelegate {
+    @Published private(set) var canCheck = false
+    @Published private(set) var status = ""
+    @Published var automaticChecks = true {
+        didSet { if controller != nil { controller.updater.automaticallyChecksForUpdates = automaticChecks } }
+    }
+    @Published var automaticDownloads = true {
+        didSet { if controller != nil { controller.updater.automaticallyDownloadsUpdates = automaticDownloads } }
+    }
+    private var controller: SPUStandardUpdaterController!
+    private var observation: AnyCancellable?
+    private weak var store: DownloadStore?
+    private var deferredInstall: (() -> Void)?
+    private var waitTask: Task<Void, Never>?
+    override init() {
+        super.init()
+        controller = SPUStandardUpdaterController(startingUpdater: false, updaterDelegate: self, userDriverDelegate: nil)
+        observation = controller.updater.publisher(for: \.canCheckForUpdates)
+            .receive(on: RunLoop.main).sink { [weak self] in self?.canCheck = $0 }
+        automaticChecks = controller.updater.automaticallyChecksForUpdates
+        automaticDownloads = controller.updater.automaticallyDownloadsUpdates
+    }
+    func connect(to store: DownloadStore) {
+        guard self.store == nil else { return }
+        self.store = store
+        do { try controller.updater.start() }
+        catch { status = "Aktualizace nelze spustit: \(error.localizedDescription)" }
+    }
+    func check() {
+        guard canCheck else { return }
+        status = ""
+        controller.checkForUpdates(nil)
+    }
+    private var queueIsIdle: Bool {
+        guard let store else { return false }
+        return !store.busy && store.waitingCount == 0
+    }
+    private func deferInstallation(_ handler: @escaping () -> Void) {
+        deferredInstall = handler
+        status = "Aktualizace je připravena. Instalace čeká na dokončení fronty."
+        waitTask?.cancel()
+        waitTask = Task { [weak self] in
+            while !Task.isCancelled {
+                try? await Task.sleep(for: .seconds(1))
+                guard !Task.isCancelled, let self else { return }
+                if self.queueIsIdle {
+                    let install = self.deferredInstall
+                    self.deferredInstall = nil
+                    self.status = "Instaluji aktualizaci…"
+                    self.store?.save()
+                    install?()
+                    return
+                }
+            }
+        }
+    }
+    func updater(_ updater: SPUUpdater, shouldPostponeRelaunchForUpdate item: SUAppcastItem,
+                 untilInvokingBlock installHandler: @escaping () -> Void) -> Bool {
+        guard !queueIsIdle else { store?.save(); return false }
+        deferInstallation(installHandler)
+        return true
+    }
+    func updater(_ updater: SPUUpdater, willInstallUpdateOnQuit item: SUAppcastItem,
+                 immediateInstallationBlock immediateInstallHandler: @escaping () -> Void) -> Bool {
+        // Always defer one event loop, so the delegate returns before installation starts.
+        deferInstallation(immediateInstallHandler)
+        return true
+    }
+    func updater(_ updater: SPUUpdater, didAbortWithError error: Error) {
+        waitTask?.cancel(); deferredInstall = nil
+        status = "Aktualizace nebyla dokončena: \(error.localizedDescription)"
+    }
+}
