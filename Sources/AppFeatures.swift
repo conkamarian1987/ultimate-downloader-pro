@@ -128,6 +128,9 @@ import Combine
     private var observation: AnyCancellable?
     private weak var store: DownloadStore?
     private var installReply: ((SPUUserUpdateChoice) -> Void)?
+    @Published private(set) var installationReadyToQuit = false
+    private var terminationTask: Task<Void, Never>?
+    private var requestTermination: () -> Void = { NSApp.terminate(nil) }
     private var expected: UInt64 = 0
     private var received: UInt64 = 0
     override init() {
@@ -157,6 +160,7 @@ import Combine
     }
     private func fail(_ error: Error) {
         guard !unlocked else { return }
+        terminationTask?.cancel(); terminationTask = nil; installationReadyToQuit = false
         canInstall = false; installReply = nil; progress = nil
         status = "Ověření nebo aktualizace se nezdařily. Připojte se k internetu a zkuste to znovu.\n\(error.localizedDescription)"
     }
@@ -200,12 +204,34 @@ import Combine
     }
     func showDownloadDidStartExtractingUpdate() { status = "Ověřuji a rozbaluji aktualizaci…"; progress = nil }
     func showExtractionReceivedProgress(_ value: Double) { progress = value }
-    func showReady(toInstallAndRelaunch reply: @escaping (SPUUserUpdateChoice) -> Void) { store?.save(); reply(.install) }
+    func showReady(toInstallAndRelaunch reply: @escaping (SPUUserUpdateChoice) -> Void) {
+        status = "Aktualizace je ověřená. Připravuji nahrazení aplikace…"
+        progress = nil; store?.save()
+        // Keep the process alive until Sparkle acknowledges installation stage 2.
+        reply(.install)
+    }
     func showInstallingUpdate(withApplicationTerminated terminated: Bool, retryTerminatingApplication retry: @escaping () -> Void) {
-        status = "Instaluji aktualizaci a restartuji aplikaci…"; progress = nil
+        progress = nil
+        guard !terminated else {
+            status = "Instaluji novou verzi…"; return
+        }
+        guard !installationReadyToQuit else { return }
+        // The external Sparkle installer is now ready and survives our exit.
+        // Do not rely solely on its Apple quit event reaching the application.
+        installationReadyToQuit = true
+        status = "Ukončuji původní verzi. Instalátor ji nahradí a spustí novou…"
+        store?.save()
+        terminationTask = Task { @MainActor [weak self] in
+            await Task.yield()
+            guard !Task.isCancelled, let self, self.installationReadyToQuit else { return }
+            self.requestTermination()
+        }
     }
     func showUpdateInstalledAndRelaunched(_ relaunched: Bool, acknowledgement: @escaping () -> Void) { acknowledgement() }
-    func dismissUpdateInstallation() { installReply = nil; canInstall = false; progress = nil }
+    func dismissUpdateInstallation() {
+        terminationTask?.cancel(); terminationTask = nil; installationReadyToQuit = false
+        installReply = nil; canInstall = false; progress = nil
+    }
     func updater(_ updater: SPUUpdater, didAbortWithError error: Error) {
         // Sparkle also ends a successful no-update cycle with this informational error.
         if (error as NSError).domain == SUSparkleErrorDomain && (error as NSError).code == 1001 { return }
@@ -226,7 +252,7 @@ struct RequiredUpdateView: View {
             HStack {
                 if updates.canInstall { Button("Aktualizovat a restartovat") { updates.install() }.buttonStyle(.borderedProminent) }
                 else { Button("Zkusit znovu") { updates.check() }.disabled(!updates.canCheck) }
-                Button("Ukončit") { NSApp.terminate(nil) }
+                Button("Ukončit") { NSApp.terminate(nil) }.disabled(updates.installationReadyToQuit)
             }
             Text("Kontrola probíhá pouze při spuštění. Bez úspěšného ověření nelze aplikaci používat.").font(.caption).foregroundStyle(.secondary)
         }.padding(48).frame(maxWidth: 680).frame(maxWidth: .infinity, maxHeight: .infinity)

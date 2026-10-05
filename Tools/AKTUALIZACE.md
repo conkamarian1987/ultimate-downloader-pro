@@ -29,3 +29,7 @@ Jedna povinná kontrola při spuštění procesu. Bez sítě či při chybě ov�
 Kanál 0.7.0 používá podepsaný ZIP v `instalace/` na main a raw URL v appcastu. Zveřejňujte zdroje, ZIP a odpovídající appcast v jednom commitu. Před publikací ověřte podpis nástrojem `publish_appcast.py` a upravte adresu enclosure na skutečné umístění archivu. Soukromý klíč do repozitáře nepatří.
 
 Kontrola aktualizací nenahrazuje licencování a nemůže zpětně vynutit politiku ve starých verzích bez brány.
+
+## Předání instalace od 0.7.1
+
+`showReady(toInstallAndRelaunch:)` jen odsouhlasí instalaci a uloží stav. Teprve `showInstallingUpdate(withApplicationTerminated:retryTerminatingApplication:)` potvrzuje připravenost externího instalátoru. Potom se jednorázově zavolá `NSApp.terminate`; AppDelegate v této fázi uloží/zastaví práci bez dalšího potvrzení. Chyba nebo ukončení cyklu ruší čekající požadavek na zavření. Aplikace se tedy neukončuje při pouhém stažení či rozbalování. Výměnu a relaunch provádí Sparkle se zapnutým instalačním UI. Starou verzi nikdy nemažeme před ověřením nové.

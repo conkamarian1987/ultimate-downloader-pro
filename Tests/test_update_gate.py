@@ -4,10 +4,11 @@ from pathlib import Path
 import plistlib, subprocess, tempfile
 repo = Path(__file__).resolve().parents[1]
 source = (repo/'Sources/AppFeatures.swift').read_text().split('import Sparkle')[1]
-code = 'import SwiftUI\nimport Sparkle\n@MainActor final class DownloadStore { var updatesBlocked=true; func save() {} }\n' + source
+code = 'import SwiftUI\nimport Sparkle\nimport UserNotifications\n@MainActor final class DownloadStore { var updatesBlocked=true; var busy=false; var waitingCount=0; var stops=0; var saves=0; func save() { saves += 1 }; func stopForQuit() { stops += 1 } }\n' + source
+code += '\nfinal class AppDelegate' + (repo/'Sources/UltimateDownloaderApp.swift').read_text().split('final class AppDelegate')[1]
 code += r"""
 extension AppUpdates {
- static func runTests() {
+ static func runTests() async {
   func item(_ version: String) -> SUAppcastItem {
    SUAppcastItem(dictionary: ["title":"Test", "enclosure":["url":"https://example.com/app.zip", "sparkle:version":version, "length":"100", "type":"application/octet-stream"]])!
   }
@@ -36,11 +37,33 @@ extension AppUpdates {
   var ready=0
   gate.showReady(toInstallAndRelaunch: { choice in precondition(choice == .install);ready += 1 })
   precondition(ready == 1 && !gate.unlocked)
+  let handoff=AppUpdates();let handoffStore=DownloadStore();handoff.store=handoffStore
+  var quits=0;handoff.requestTermination = { quits += 1 }
+  handoff.showReady(toInstallAndRelaunch: { precondition($0 == .install) })
+  precondition(!handoff.installationReadyToQuit && quits == 0, "Quit before installer was ready")
+  handoff.showInstallingUpdate(withApplicationTerminated:false,retryTerminatingApplication:{ preconditionFailure("Unexpected repeated installation") })
+  handoff.showInstallingUpdate(withApplicationTerminated:false,retryTerminatingApplication:{})
+  await handoff.terminationTask?.value
+  precondition(quits == 1 && handoff.installationReadyToQuit, "Ready installer must close old app exactly once")
+  let delegate=AppDelegate();delegate.store=handoffStore;delegate.updates=handoff
+  handoffStore.busy=true;handoffStore.waitingCount=1
+  precondition(delegate.prepareForUpdateTermination() && handoffStore.stops == 1, "Update must save/stop without another confirmation")
+  delegate.updates=nil
+  precondition(!delegate.prepareForUpdateTermination() && handoffStore.stops == 1, "Ordinary quit must keep its normal confirmation")
+  let aborted=AppUpdates();var abortQuits=0;aborted.requestTermination = { abortQuits += 1 }
+  aborted.showInstallingUpdate(withApplicationTerminated:false,retryTerminatingApplication:{})
+  let pending=aborted.terminationTask
+  aborted.showUpdaterError(NSError(domain:SUSparkleErrorDomain,code:4000)) {}
+  await pending?.value
+  precondition(abortQuits == 0 && !aborted.installationReadyToQuit, "Error must cancel pending exit")
+  let alreadyClosed=AppUpdates();var closedQuits=0;alreadyClosed.requestTermination = { closedQuits += 1 }
+  alreadyClosed.showInstallingUpdate(withApplicationTerminated:true,retryTerminatingApplication:{})
+  precondition(!alreadyClosed.installationReadyToQuit && closedQuits == 0)
   let nextLaunch=AppUpdates();precondition(!nextLaunch.unlocked)
-  print("PASS: current/newer, required/incompatible, empty feed, offline, dismissal, exactly-once install, relaunch locked")
+  print("PASS: current/newer, required/incompatible, empty feed, offline, dismissal, exactly-once install, relaunch locked; install handoff ordering, exactly-once quit, abort cancellation")
  }
 }
-@main struct Tests { @MainActor static func main() { AppUpdates.runTests() } }
+@main struct Tests { @MainActor static func main() async { await AppUpdates.runTests() } }
 """
 with tempfile.TemporaryDirectory() as tmp:
  p=Path(tmp); app=p/'GateTests.app/Contents'; (app/'MacOS').mkdir(parents=True)

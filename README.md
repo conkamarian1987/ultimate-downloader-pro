@@ -5,7 +5,7 @@
 
   **Nativní správce stahování médií pro macOS**
 
-  ![Verze](https://img.shields.io/badge/verze-Beta%200.7.0%20%2811%29-13a89e)
+  ![Verze](https://img.shields.io/badge/verze-Beta%200.7.1%20%2812%29-13a89e)
   ![macOS](https://img.shields.io/badge/macOS-14%2B-111827?logo=apple)
   ![Architektura](https://img.shields.io/badge/Apple%20silicon-arm64-334155)
   ![Swift](https://img.shields.io/badge/Swift-SwiftUI-F05138?logo=swift&logoColor=white)
@@ -17,13 +17,15 @@ Ultimate Downloader Pro spojuje stahování videí, audia a obrázků do jedné 
 
 ## Stažení a instalace
 
-Aktuální balíček **0.7.0 (11)** je pro Macy s **Apple silicon (M1 a novější)**. VLC je součástí aplikace.
+Aktuální balíček **0.7.1 (12)** je pro Macy s **Apple silicon (M1 a novější)**. VLC je součástí aplikace.
 
-### [Stáhnout Ultimate Downloader Pro Beta 0.7.0 — sestavení 11](https://github.com/conkamarian1987/ultimate-downloader-pro/raw/refs/heads/main/instalace/UltimateDownloaderPro-0.7.0.zip)
+### [Stáhnout Ultimate Downloader Pro Beta 0.7.1 — sestavení 12](https://github.com/conkamarian1987/ultimate-downloader-pro/raw/refs/heads/main/instalace/UltimateDownloaderPro-0.7.1.zip)
 
 **Máte verzi 0.5.0 nebo 0.6.0?** V nabídce aplikace zvolte **Zkontrolovat aktualizace…**. Sparkle ověří podpis balíčku a nahradí aktualizovanou kopii aplikace na jejím místě.
 
 **Od verze 0.7.0 je kontrola při spuštění povinná.** Bez připojení nebo úspěšného ověření zůstane aplikace zablokovaná; lze ověření zopakovat nebo aplikaci ukončit. Dostupnou aktualizaci nelze přeskočit. Po úspěšném ověření už během tohoto běhu další kontroly neprobíhají.
+
+**Ve verzi 0.7.0** se nabídka aktualizace zobrazí při novém spuštění aplikace. Od 0.7.1 se původní proces výslovně ukončí, jakmile instalátor potvrdí připravenost. Externí instalátor nahradí aplikaci a spustí novou verzi. Samotné nahrazení může být velmi rychlé. Přechod z 0.7.0 ještě používá starý aktualizační kód, takže při něm může být naposledy nutné ruční ukončení.
 
 Pro první instalaci:
 
@@ -161,8 +163,8 @@ Podrobnosti jsou v [návodu pro sestavení](docs/SESTAVENI.md). Příspěvky a h
 
 ## Ověření a známá omezení
 
-Release sestavení 0.7.0 (11) pro `arm64` a kontrola lokálního podpisu prošly 5. 10. 2026. ZIP má ověřený podpis Ed25519. Testy aktualizační brány pokrývají aktuální verzi, nedostupný server, prázdný kanál, nekompatibilní systém, odmítnutí a opakované spuštění instalace. Starší přechod 0.5.0 → 0.6.0 uživatel potvrdil. Nový přechod 0.6.0 → 0.7.0 a vizuální kontrola brány ještě vyžadují ověření; nástroj pro ovládání okna aplikace selhává.
+Release sestavení 0.7.1 (12) pro `arm64` a kontrola lokálního podpisu prošly 5. 10. 2026. ZIP má ověřený podpis Ed25519. Testy brány i předání instalace prošly. Skutečný test na oddělené aplikaci se stejným kódem potvrdil automatické ukončení starého procesu, nahrazení na stejném místě, odstranění souboru ze staré verze a spuštění nového procesu. Podrobnosti a hranice ověření: [test instalace](docs/TEST-INSTALACE-0.7.1.md).
 
 Aplikace má ad-hoc podpis, není podepsaná Apple Developer ID ani notarizovaná. Povinná aktualizace není licenční systém a neblokuje starší vydání, která tuto kontrolu ještě neměla.
 
-Podrobnosti vydání: [0.7.0](docs/VYDANI-0.7.0.md). Návod: [Tools/AKTUALIZACE.md](Tools/AKTUALIZACE.md).
+Podrobnosti vydání: [0.7.1](docs/VYDANI-0.7.1.md). Návod: [Tools/AKTUALIZACE.md](Tools/AKTUALIZACE.md).

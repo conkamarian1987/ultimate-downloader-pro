@@ -12,7 +12,7 @@ import UserNotifications
                 if updates.unlocked { StudioView() }
                 else { RequiredUpdateView() }
             }.environmentObject(store).environmentObject(updates)
-                .onAppear { delegate.store = store; updates.connect(to: store) }
+                .onAppear { delegate.store = store; delegate.updates = updates; updates.connect(to: store) }
         }.defaultSize(width: 1220, height: 820)
         .commands {
             CommandGroup(replacing: .appInfo) {
@@ -29,7 +29,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCent
         DispatchQueue.main.async { NSApp.activate(ignoringOtherApps: true); NSApp.windows.first(where: { $0.canBecomeMain })?.makeKeyAndOrderFront(nil); NotificationCenter.default.post(name: .init("ShowDownloadQueue"), object: nil) }; completionHandler()
     }
     var store: DownloadStore?
+    weak var updates: AppUpdates?
+    @MainActor func prepareForUpdateTermination() -> Bool {
+        // This flag is set only after Sparkle's external installer is ready.
+        guard updates?.installationReadyToQuit == true else { return false }
+        store?.stopForQuit()
+        return true
+    }
     func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
+        if prepareForUpdateTermination() { return .terminateNow }
         guard let store else { return .terminateNow }
         if store.busy || store.waitingCount > 0 {
             let alert = NSAlert(); alert.messageText = "Ukončit probíhající úlohy?"

@@ -1,5 +1,14 @@
 # Změny
 
+## Beta 0.7.1 — sestavení 12 (5. 10. 2026)
+
+- Původní aplikace se automaticky ukončí po potvrzení připravenosti externího instalátoru.
+- Instalace nečeká na ruční zavření a nezobrazuje druhé potvrzení ukončení úloh.
+- Před ukončením se uloží stav; během chyby nebo nedokončené přípravy se aplikace předčasně neukončí.
+- Viditelné fáze ověření, přípravy nahrazení a ukončení; nahrazení a restart nadále provádí Sparkle.
+- Sjednocení verze rozšíření Sdílet s hlavní aplikací.
+- Skutečný test na oddělené aplikaci potvrdil nahrazení staré verze a automatické spuštění nové.
+
 ## Beta 0.7.0 — sestavení 11 (5. 10. 2026)
 
 - Povinné ověření verze při každém spuštění, bez pravidelných kontrol na pozadí.
