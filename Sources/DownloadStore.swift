@@ -9,6 +9,7 @@ import UserNotifications
     @Published var maintenanceLog = ""
     @Published var message: String?
     @Published var paused = false
+    @Published var mediaPlaybackActive = false
     private var imageTask: Task<Void,Never>?
     private var runner: ProcessRunner?
     private var activeID: UUID?
@@ -66,6 +67,13 @@ import UserNotifications
         }
         save(); startNext()
     }
+    func enqueueHellspy(_ video: HellspyVideo, quality: String, folder: String) {
+        guard FileManager.default.isWritableFile(atPath: folder) else { message = "Cílová složka není zapisovatelná."; return }
+        var job = DownloadJob(url: "https://hellspy.to", profile: DownloadProfile.video[0], playlist: false, folder: folder)
+        job.displayTitle = video.title
+        job.hellspy = HellspyReference(id: video.id, fileHash: video.fileHash, quality: quality)
+        jobs.insert(job, at: 0); save(); startNext()
+    }
     func enableNotifications() {
         UNUserNotificationCenter.current().requestAuthorization(options:[.alert,.sound]) { allowed,_ in
             UserDefaults.standard.set(allowed,forKey:"notifications")
@@ -81,6 +89,27 @@ import UserNotifications
         guard !busy, !paused, let index = jobs.indices.reversed().first(where: { jobs[$0].state == .queued }) else { return }
         tools = .current
         let jobToStart = jobs[index]
+        if let reference = jobToStart.hellspy {
+            activeID = jobToStart.id; jobs[index].state = .running; jobs[index].detail = "Stahuji z Hellspy…"
+            imageTask = Task {
+                do {
+                    let path = try await HellspyAPI.download(reference, folder: jobToStart.folder, title: jobToStart.displayTitle ?? "Video") { [weak self] value in
+                        Task { @MainActor in
+                            guard let self, let i = self.jobs.firstIndex(where: { $0.id == jobToStart.id }), self.jobs[i].state == .running else { return }
+                            self.jobs[i].progress = value.fraction ?? 0
+                            self.jobs[i].downloadTotalBytes = value.expected
+                            self.jobs[i].detail = value.detail
+                        }
+                    }
+                    if let i = jobs.firstIndex(where: { $0.id == jobToStart.id }) { jobs[i].files.append(path) }
+                    finish(id: jobToStart.id, code: 0, cancelled: false)
+                } catch {
+                    if let i = jobs.firstIndex(where: { $0.id == jobToStart.id }) { jobs[i].log = error.localizedDescription }
+                    finish(id: jobToStart.id, code: 1, cancelled: Task.isCancelled)
+                }
+            }
+            return
+        }
         if let options = jobToStart.imageOptions {
             activeID = jobToStart.id; jobs[index].state = .running; jobs[index].detail = "Stahuji a zpracovávám obrázek…"
             imageTask = Task {

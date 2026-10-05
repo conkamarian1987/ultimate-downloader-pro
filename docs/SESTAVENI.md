@@ -8,6 +8,8 @@
 
 ## Xcode
 
+Nejdříve spusťte `python3 Tools/setup_sparkle.py` a `python3 Tools/setup_vlckit.py`. Stáhnou připnuté frameworky a ověří jejich SHA-256.
+
 1. Otevřete `UltimateDownloader.xcodeproj`.
 2. Vyberte schéma `UltimateDownloader`.
 3. Jako cíl zvolte **My Mac**.
@@ -18,12 +20,14 @@ Projekt obsahuje hlavní aplikaci a rozšíření **Share**. Pro vlastní distri
 ## Příkazová řádka
 
 ```sh
+python3 Tools/setup_sparkle.py
+python3 Tools/setup_vlckit.py
 xcodebuild \
   -project UltimateDownloader.xcodeproj \
   -scheme UltimateDownloader \
   -configuration Release \
   -derivedDataPath build.noindex \
-  ARCHS="arm64 x86_64" ONLY_ACTIVE_ARCH=NO \
+  ARCHS=arm64 ONLY_ACTIVE_ARCH=NO \
   build
 ```
 

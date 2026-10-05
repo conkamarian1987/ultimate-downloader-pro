@@ -5,9 +5,9 @@
 
   **Nativní správce stahování médií pro macOS**
 
-  ![Verze](https://img.shields.io/badge/verze-Beta%200.4.0%20%287%29-13a89e)
+  ![Verze](https://img.shields.io/badge/verze-Beta%200.6.0%20%2810%29-13a89e)
   ![macOS](https://img.shields.io/badge/macOS-14%2B-111827?logo=apple)
-  ![Architektura](https://img.shields.io/badge/Apple%20silicon%20%2B%20Intel-universal-334155)
+  ![Architektura](https://img.shields.io/badge/Apple%20silicon-arm64-334155)
   ![Swift](https://img.shields.io/badge/Swift-SwiftUI-F05138?logo=swift&logoColor=white)
 </div>
 
@@ -17,9 +17,13 @@ Ultimate Downloader Pro spojuje stahování videí, audia a obrázků do jedné 
 
 ## Stažení a instalace
 
-Aktuální instalační balíček obsahuje univerzální aplikaci pro Apple silicon i Intel:
+Aktuální balíček **0.6.0 (10)** je pro Macy s **Apple silicon (M1 a novější)**. VLC je součástí aplikace.
 
-### [Stáhnout Ultimate Downloader Pro Beta 0.4.0 — sestavení 7](https://github.com/conkamarian1987/ultimate-downloader-pro/raw/refs/heads/main/instalace/Ultimate%20Downloader%20Pro%20Beta%200.4.0.zip)
+### [Stáhnout Ultimate Downloader Pro Beta 0.6.0 — sestavení 10](https://github.com/conkamarian1987/ultimate-downloader-pro/raw/refs/heads/main/instalace/UltimateDownloaderPro-0.6.0.zip)
+
+**Máte verzi 0.5.0?** V nabídce aplikace zvolte **Zkontrolovat aktualizace…**. Balíček se ověří podpisem a instalace počká na dokončení stahování a zavření přehrávače. Při prvním přechodu na 0.6.0 ještě ověřujeme celý instalační postup.
+
+Pro první instalaci:
 
 1. Stáhněte ZIP a rozbalte jej dvojklikem ve Finderu.
 2. Ukončete starší verzi aplikace.
@@ -33,7 +37,13 @@ Kontrolní SHA-256 je uveden v souboru [SHA256SUMS.txt](instalace/SHA256SUMS.txt
 ## Hlavní funkce
 
 - video, audio a obrázky v jedné aplikaci;
-- tři záložky **Z odkazu**, **YouTube** a **Fronta**, bez domovské obrazovky a levého menu;
+- čtyři záložky **Z odkazu**, **YouTube**, **Hellspy** a **Fronta**;
+- vyhledávání Hellspy se stránkováním, kvalitou a tlačítky Přehrát / Stáhnout u každého výsledku;
+- vestavěný VLC přehrávač se zvukovými stopami, titulky, poměrem stran, ořezem, přiblížením a časovým posunem;
+- celá obrazovka pouze pro video; kurzor a ovládání se při přehrávání skryjí po třech sekundách nečinnosti;
+- ochrana displeje proti ztmavení a uspání během přehrávání na celé obrazovce;
+- živý průběh, přenesená velikost a rychlost stahování z Hellspy;
+- podepsané aktualizace přes Sparkle s automatickou i ruční kontrolou;
 - univerzální odkaz pro video, audio i galerie; dostupná média zjišťují yt-dlp a gallery-dl;
 - volby formátu, kvality a cílové složky přímo pod odkazem;
 - přehrávač YouTube přímo v záložce; při přepnutí mimo YouTube se uvolní;
@@ -49,7 +59,7 @@ Kontrolní SHA-256 je uveden v souboru [SHA256SUMS.txt](instalace/SHA256SUMS.txt
 - světlý, tmavý a systémový motiv;
 - rozšíření **Sdílet** pro předání odkazu z jiných aplikací.
 
-Ve verzi **Beta 0.4.0 (7)** je stahování soustředěné do tří horních záložek. Nastavení otevřete ozubeným kolečkem. Historie, uložené profily a nastavení zůstávají zachované. Podrobnosti obsahuje [CHANGELOG.md](CHANGELOG.md).
+Ve verzi **Beta 0.6.0 (10)** přibyla záložka Hellspy a vestavěný přehrávač VLC. Nastavení otevřete ozubeným kolečkem. Historie, uložené profily a nastavení zůstávají zachované. Podrobnosti obsahuje [CHANGELOG.md](CHANGELOG.md).
 
 ## Jak aplikaci používat
 
@@ -63,13 +73,21 @@ Pro širší průzkum zapněte **Prohledat také obrázky a média na webové st
 
 Zadejte dotaz nebo odkaz a zvolte **Vyhledat**. U výsledku vyberte **Přehrát** nebo **Volby stažení**. Přehrávač i nastavení stažení se zobrazí ve stejné záložce. Výsledky a rozepsané vstupy zůstávají při přepínání záložek zachované.
 
+### Hellspy a přehrávač
+
+Zadejte název videa a zvolte **Vyhledat**. Další výsledky se načítají při posouvání dolů nebo tlačítkem **Další výsledky**. Každá karta má **Přehrát**, **Stáhnout** a výběr kvality; tlačítko **Načíst další kvality** načte dostupné varianty. Přehrání automaticky přesune pohled k přehrávači. Stahování pokračuje ve společné frontě.
+
+**Obraz a zvuk** umožňuje vybrat zvukovou stopu, zapnout nebo vypnout titulky, přidat vlastní soubor titulků a upravit obraz i časový posun zvuku/titulků. Dostupnost stop závisí na konkrétním videu.
+
+Tlačítkem celé obrazovky zvětšíte samotné video. Po třech sekundách nečinnosti během přehrávání zmizí kurzor i ovládání; pohyb myši je vrátí. **Esc** ukončí celou obrazovku. Při pauze, zastavení nebo návratu do okna se uvolní ochrana displeje proti uspání. Přepnutí na jinou záložku přehrávání ukončí.
+
 ### Fronta a nastavení
 
 Záložka **Fronta** ukazuje počet čekajících a spuštěných úloh, průběh stahování i převodu, historii a protokoly. Mazání historie neodstraňuje stažené soubory. Ozubené kolečko otevírá motiv, nástroje, schránku, oznámení a přihlášení ke službám.
 
 ## Obrázky rozhraní
 
-Skutečné snímky aplikace Beta 0.4.0 (7).
+Níže jsou starší skutečné snímky verze 0.4.0; nezobrazují novou záložku Hellspy. Snímky 0.6.0 budou doplněny po jejich pořízení.
 
 ### Z odkazu — formát a kvalita přímo pod odkazem
 
@@ -85,7 +103,7 @@ Skutečné snímky aplikace Beta 0.4.0 (7).
 
 ## Potřebné nástroje
 
-Aplikace využívá nástroje nainstalované v systému. Nejsou vloženy přímo do instalačního balíčku.
+Pro stahování přes obecné odkazy a převody aplikace využívá systémové nástroje. VLC a Sparkle jsou vložené přímo do balíčku; samostatnou aplikaci VLC nepotřebujete. Hellspy používá vlastní přímé stahování.
 
 ```sh
 brew install yt-dlp ffmpeg gallery-dl
@@ -106,15 +124,17 @@ Další informace jsou v [zásadách ochrany soukromí](docs/SOUKROMI.md) a [bez
 ## Systémové požadavky
 
 - macOS 14 Sonoma nebo novější;
-- Mac s Apple silicon nebo procesorem Intel;
+- Mac s Apple silicon (aktuálně distribuovaný balíček `arm64`);
 - připojení k internetu;
 - Homebrew a nástroje uvedené výše pro skutečné stahování a převod.
 
 ## Sestavení ze zdrojů
 
-Projekt otevřete v Xcode nebo použijte příkaz:
+Nejdříve stáhněte připnuté frameworky, poté projekt otevřete v Xcode nebo použijte příkaz:
 
 ```sh
+python3 Tools/setup_sparkle.py
+python3 Tools/setup_vlckit.py
 xcodebuild \
   -project UltimateDownloader.xcodeproj \
   -scheme UltimateDownloader \
@@ -127,9 +147,11 @@ Podrobnosti jsou v [návodu pro sestavení](docs/SESTAVENI.md). Příspěvky a h
 
 ## Ověření a známá omezení
 
-Release sestavení 0.4.0 (7) prošlo pro `arm64` i `x86_64`, stejně jako kontrola lokálního podpisu aplikace a vloženého rozšíření. Testy časových údajů, ukládání profilů a kompatibility starší historie prošly. Nové rozhraní zatím není koncově ověřené klikáním kvůli pádu ovládací služby. Test převodu vytvořil MP4 H.264/yuv420p/AAC; ověření dekódování AVFoundation v omezeném testovacím prostředí skončilo chybou `Cannot Decode`, takže aktuální průchod tímto testem nepotvrzujeme. Dřívější testy kompatibility jsou zahrnuté ve zdrojích.
+Release sestavení 0.6.0 (10) pro `arm64` a kontrola lokálního podpisu aplikace prošly 5. 10. 2026. Aktualizační ZIP má ověřený podpis Ed25519. Prošly testy živých údajů přenosu (známá i neznámá velikost a zrušení), stránkování Hellspy, dekódování VLC, přepínání stop a titulků, poměru stran, časového posunu a odložení aktualizace při obsazené frontě nebo přehrávání. Ruční kontrolu posledních oprav potvrdil uživatel.
 
-Balíček se nyní distribuuje jako ZIP. Vytvoření nového DMG bylo v prostředí vydání zablokované nedostupnými službami DiskManagement. Zdrojové kódy, číslo sestavení a ZIP v tomto repozitáři patří ke stejné verzi.
+**Skutečný přechod z 0.5.0 na 0.6.0 přes Sparkle zatím čeká na ověření.** Test podpisu a dostupnosti balíčku sám o sobě neověřuje instalaci. Aplikace má ad-hoc podpis, není podepsaná Apple Developer ID ani notarizovaná. Podpis aktualizace Sparkle je samostatný mechanismus.
+
+Podrobnosti vydání: [0.6.0](docs/VYDANI-0.6.0.md). Návod pro další podepsané aktualizace: [Tools/AKTUALIZACE.md](Tools/AKTUALIZACE.md).
 
 Podpora webů závisí také na aktuální verzi `yt-dlp`, `gallery-dl` a změnách konkrétních služeb. Označení podporované služby proto neznamená záruku každého odkazu nebo soukromého obsahu.
 
@@ -142,6 +164,8 @@ Stahujte pouze obsah, ke kterému máte potřebná práva nebo souhlas. Uživate
 - [yt-dlp](https://github.com/yt-dlp/yt-dlp)
 - [FFmpeg](https://ffmpeg.org/)
 - [gallery-dl](https://github.com/mikf/gallery-dl)
+- [VLCKit](https://code.videolan.org/videolan/VLCKit) — [licence](Tools/VLCKit-LICENSE.txt), [informace k distribuci](Tools/VLCKit-NOTICE.md)
+- [Sparkle](https://sparkle-project.org/) — [licence](Tools/Sparkle-LICENSE.txt)
 
 ## Autor a licence
 

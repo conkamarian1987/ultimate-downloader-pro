@@ -31,6 +31,7 @@ struct StudioView: View {
                 Spacer()
                 nav("scan", "Z odkazu", "link")
                 nav("youtube", "YouTube", "play.rectangle")
+                nav("hellspy", "Hellspy", "film")
                 nav("queue", "Fronta", "arrow.down.circle", badge:store.waitingCount)
                 Spacer()
                 Button { showSettings = true } label: { Image(systemName:"gearshape").font(.title3) }.help("Nastavení")
@@ -41,6 +42,8 @@ struct StudioView: View {
                     .opacity(route == "scan" ? 1 : 0).allowsHitTesting(route == "scan").accessibilityHidden(route != "scan")
                 MediaWorkspace(youtube:true, incoming:.constant(""), folder:folder, active:route == "youtube")
                     .opacity(route == "youtube" ? 1 : 0).allowsHitTesting(route == "youtube").accessibilityHidden(route != "youtube")
+                HellspyView(folder: folder, active: route == "hellspy")
+                    .opacity(route == "hellspy" ? 1 : 0).allowsHitTesting(route == "hellspy").accessibilityHidden(route != "hellspy")
                 if route == "queue" { ScrollView { queue.padding(28) }.background(background) }
             }
             if let link = clipboard.candidate {
@@ -110,7 +113,8 @@ struct StudioView: View {
                         if job.conversionStage != nil {
                             if let progress = job.conversionProgress { ProgressView(value:progress) }
                             else { ProgressView().controlSize(.small) }
-                        } else { ProgressView(value:job.progress) }
+                        } else if job.hellspy != nil && job.downloadTotalBytes == nil { ProgressView() }
+                        else { ProgressView(value:job.progress) }
                     }
                     Text(job.detail).font(.caption).foregroundStyle(secondaryText)
                     HStack { Text(job.created,style:.date).font(.caption2).foregroundStyle(tertiaryText); Spacer(); Button("Protokol") { logJob = job }; if job.state == .running || job.state == .queued { Button("Zrušit") { store.cancel(job.id) } } else { Button("Znovu") { store.retry(job) }; Button("Odebrat", systemImage:"trash", role:.destructive) { store.removeFromHistory(job.id) }.help("Odebere pouze záznam z historie. Stažený soubor zůstane zachovaný.") }; Button("Finder") { let urls = job.files.filter { FileManager.default.fileExists(atPath:$0) }.map { URL(fileURLWithPath:$0) }; if urls.isEmpty { NSWorkspace.shared.open(URL(fileURLWithPath:job.folder)) } else { NSWorkspace.shared.activateFileViewerSelecting(urls) } } }

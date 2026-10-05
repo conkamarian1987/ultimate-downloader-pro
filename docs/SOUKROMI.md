@@ -6,6 +6,8 @@ Ultimate Downloader Pro ukládá nastavení, historii úloh a oblíbené profily
 
 Síťové požadavky směřují na adresy, které uživatel vloží nebo vybere, a na služby potřebné pro načtení jejich webového obsahu. Externí nástroje `yt-dlp` a `gallery-dl` mohou komunikovat s příslušnými službami podle zadaného odkazu.
 
+Vyhledávání Hellspy odesílá zadaný dotaz službě `api.hellspy.to`; přehrávání a stahování komunikuje s jejími servery videa. Sparkle při povolené kontrole aktualizací načítá aktualizační kanál a balíčky z GitHubu. Kontroly i automatické stahování aktualizací lze vypnout v nastavení.
+
 ## Přihlášení a cookies
 
 Přihlášení probíhá ve vloženém WebKit okně. Aplikace nečte cookies ze Safari. Při práci s přihlášenou službou se exportují pouze cookies odpovídající dané doméně do dočasného souboru s oprávněním `0600`; po dokončení operace se soubor odstraní.

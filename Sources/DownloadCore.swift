@@ -41,6 +41,8 @@ struct DownloadJob: Identifiable, Codable {
     var detail = "Čeká na spuštění"
     var files: [String] = []
     var log = ""
+    var hellspy: HellspyReference? = nil
+    var downloadTotalBytes: Int64? = nil
     var formatSelector: String? = nil
     var subtitleLanguage: String? = nil
     var imageOptions: ImageOptions? = nil

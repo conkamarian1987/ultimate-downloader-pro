@@ -73,6 +73,9 @@
 				<string>00000000000000000000006C</string>
 				<string>00000000000000000000006D</string>
 				<string>00000000000000000000006E</string>
+				<string>B10000000000000000000000</string>
+				<string>B10000000000000000000001</string>
+				<string>B10000000000000000000002</string>
 			</array>
 			<key>isa</key>
 			<string>PBXGroup</string>
@@ -105,6 +108,9 @@
 				<string>0000000000000000000001C2</string>
 				<string>000000000000000000000190</string>
 				<string>A10000000000000000000001</string>
+				<string>B30000000000000000000001</string>
+				<string>B40000000000000000000000</string>
+				<string>B40000000000000000000001</string>
 			</array>
 			<key>isa</key>
 			<string>PBXGroup</string>
@@ -128,6 +134,9 @@
 				<string>0000000000000000000000D0</string>
 				<string>0000000000000000000000D1</string>
 				<string>0000000000000000000000D2</string>
+				<string>B20000000000000000000000</string>
+				<string>B20000000000000000000001</string>
+				<string>B20000000000000000000002</string>
 			</array>
 			<key>isa</key>
 			<string>PBXSourcesBuildPhase</string>
@@ -141,6 +150,7 @@
 			<key>files</key>
 			<array>
 				<string>A10000000000000000000002</string>
+				<string>B30000000000000000000002</string>
 			</array>
 			<key>isa</key>
 			<string>PBXFrameworksBuildPhase</string>
@@ -155,6 +165,8 @@
 			<array>
 				<string>000000000000000000000012</string>
 				<string>0000000000000000000001C3</string>
+				<string>B50000000000000000000000</string>
+				<string>B50000000000000000000001</string>
 			</array>
 			<key>isa</key>
 			<string>PBXResourcesBuildPhase</string>
@@ -822,6 +834,7 @@
 			<key>files</key>
 			<array>
 				<string>A10000000000000000000003</string>
+				<string>B30000000000000000000003</string>
 			</array>
 			<key>isa</key>
 			<string>PBXCopyFilesBuildPhase</string>
@@ -829,6 +842,129 @@
 			<string>Embed Frameworks</string>
 			<key>runOnlyForDeploymentPostprocessing</key>
 			<integer>0</integer>
+		</dict>
+		<key>B10000000000000000000000</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>HellspyService.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>B20000000000000000000000</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+			<key>fileRef</key>
+			<string>B10000000000000000000000</string>
+		</dict>
+		<key>B10000000000000000000001</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>NativeVideoPlayer.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>B20000000000000000000001</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+			<key>fileRef</key>
+			<string>B10000000000000000000001</string>
+		</dict>
+		<key>B10000000000000000000002</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>HellspyView.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>B20000000000000000000002</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+			<key>fileRef</key>
+			<string>B10000000000000000000002</string>
+		</dict>
+		<key>B30000000000000000000001</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>wrapper.framework</string>
+			<key>path</key>
+			<string>Frameworks/VLCKit.framework</string>
+			<key>sourceTree</key>
+			<string>SOURCE_ROOT</string>
+		</dict>
+		<key>B30000000000000000000002</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+			<key>fileRef</key>
+			<string>B30000000000000000000001</string>
+		</dict>
+		<key>B30000000000000000000003</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+			<key>fileRef</key>
+			<string>B30000000000000000000001</string>
+			<key>settings</key>
+			<dict>
+				<key>ATTRIBUTES</key>
+				<array>
+					<string>CodeSignOnCopy</string>
+					<string>RemoveHeadersOnCopy</string>
+				</array>
+			</dict>
+		</dict>
+		<key>B40000000000000000000000</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>text</string>
+			<key>path</key>
+			<string>Tools/VLCKit-LICENSE.txt</string>
+			<key>sourceTree</key>
+			<string>SOURCE_ROOT</string>
+		</dict>
+		<key>B50000000000000000000000</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+			<key>fileRef</key>
+			<string>B40000000000000000000000</string>
+		</dict>
+		<key>B40000000000000000000001</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>text</string>
+			<key>path</key>
+			<string>Tools/VLCKit-NOTICE.md</string>
+			<key>sourceTree</key>
+			<string>SOURCE_ROOT</string>
+		</dict>
+		<key>B50000000000000000000001</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+			<key>fileRef</key>
+			<string>B40000000000000000000001</string>
 		</dict>
 	</dict>
 	<key>rootObject</key>

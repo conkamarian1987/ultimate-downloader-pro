@@ -153,11 +153,11 @@ import Combine
     }
     private var queueIsIdle: Bool {
         guard let store else { return false }
-        return !store.busy && store.waitingCount == 0
+        return !store.busy && store.waitingCount == 0 && !store.mediaPlaybackActive
     }
     private func deferInstallation(_ handler: @escaping () -> Void) {
         deferredInstall = handler
-        status = "Aktualizace je připravena. Instalace čeká na dokončení fronty."
+        status = "Aktualizace je připravena. Instalace čeká na dokončení fronty a zavření přehrávače."
         waitTask?.cancel()
         waitTask = Task { [weak self] in
             while !Task.isCancelled {
