@@ -3,11 +3,11 @@
   <channel>
     <title>Ultimate Downloader Pro</title>
     <item>
-      <title>0.6.0</title>
-      <sparkle:version>10</sparkle:version>
-      <sparkle:shortVersionString>0.6.0</sparkle:shortVersionString>
+      <title>0.7.0</title>
+      <sparkle:version>11</sparkle:version>
+      <sparkle:shortVersionString>0.7.0</sparkle:shortVersionString>
       <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-      <enclosure url="https://raw.githubusercontent.com/conkamarian1987/ultimate-downloader-pro/main/instalace/UltimateDownloaderPro-0.6.0.zip" length="36809024" type="application/octet-stream" sparkle:edSignature="yQzXENOLzoCHuun2rWHsfY/UjQYYg8Tlb9CFTQWbMTv1qiF/E8SjDRbopkErRgzb6e0r1rxD8y5Of6QFXWfJDA==" />
+      <enclosure url="https://raw.githubusercontent.com/conkamarian1987/ultimate-downloader-pro/main/instalace/UltimateDownloaderPro-0.7.0.zip" length="36818827" type="application/octet-stream" sparkle:edSignature="uKyXY/eVdg7Ujv2MNrGkKPma/kjyvU1I07UiJ+D7+QAQCrRkIwe4stNVgx3ZELEkOwm7+4D5f0X6F9XZkKGpBw==" />
     </item>
   </channel>
 </rss>

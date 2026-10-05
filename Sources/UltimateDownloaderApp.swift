@@ -8,13 +8,15 @@ import UserNotifications
     @StateObject private var updates = AppUpdates()
     var body: some Scene {
         WindowGroup {
-            StudioView().environmentObject(store).environmentObject(updates)
+            Group {
+                if updates.unlocked { StudioView() }
+                else { RequiredUpdateView() }
+            }.environmentObject(store).environmentObject(updates)
                 .onAppear { delegate.store = store; updates.connect(to: store) }
         }.defaultSize(width: 1220, height: 820)
         .commands {
             CommandGroup(replacing: .appInfo) {
                 Button("O Ultimate Downloader Pro") { AboutWindow.shared.show() }
-                Button("Zkontrolovat aktualizace…") { updates.check() }.disabled(!updates.canCheck)
             }
         }
     }

@@ -1,5 +1,14 @@
 # Změny
 
+## Beta 0.7.0 — sestavení 11 (5. 10. 2026)
+
+- Povinné ověření verze při každém spuštění, bez pravidelných kontrol na pozadí.
+- Bez úspěšného ověření zůstávají pracovní obrazovky a spouštění stahování zamčené.
+- Aktualizaci nelze přeskočit; při chybě lze ověření zopakovat nebo aplikaci ukončit.
+- Vlastní obrazovka průběhu stažení, ověření a instalace; Sparkle nahrazuje běžící kopii na stejném místě.
+- Zachování historie, nastavení a stažených souborů.
+- Automatické testy brány a Release build prošly; celý přechod na 0.7.0 čeká na ruční test.
+
 ## Beta 0.6.0 — sestavení 10 (5. 10. 2026)
 
 - Doplněno šest aktuálních snímků rozhraní: Z odkazu, YouTube, Hellspy, přehrávač a průběh stahování.
@@ -15,7 +24,7 @@
 - Přímý odkaz na video se obnovuje až při zahájení úlohy, aby nevypršel během čekání.
 - Aktualizace navíc počká na zavření přehrávače.
 - Balíček pro Apple silicon (`arm64`), ověřený podpis aktualizace Ed25519.
-- Sestavení a automatické testy prošly, uživatel potvrdil funkčnost posledních oprav. Skutečný přechod 0.5.0 → 0.6.0 čeká na test po zveřejnění.
+- Sestavení a automatické testy prošly, uživatel potvrdil funkčnost posledních oprav. Skutečný přechod 0.5.0 → 0.6.0 následně potvrdil uživatel.
 
 ## Beta 0.5.0 — sestavení 9 (28. 9. 2026)
 

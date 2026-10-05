@@ -22,6 +22,10 @@ Workflow `Publish signed update` stáhne oba soubory, nezávisle ověří podpis
 
 Pouhé nahrání zdrojových kódů nebo nepodepsaného ZIPu aktualizaci nevydá. První verzi se Sparkle je nutné nainstalovat běžným způsobem. Před prvním ostrým vydáním ověřte celý přechod mezi dvěma verzemi, zachování historie a odložení instalace při stahování. Lokální testy nenahrazují toto ověření.
 
-## Chování v aplikaci
+## Chování v aplikaci od 0.7.0
 
-Kontrola každých šest hodin při spuštěné aplikaci; uživatel ji může vypnout a spustit ručně. Automatické stahování a instalaci může vypnout samostatně. Instalace čeká i na pozastavenou frontu; čekající úlohy je nutné dokončit nebo zrušit. Při síťové chybě zůstane dosavadní aplikace. Sparkle ověřuje podpis ještě před rozbalením archivu. Aktuální kanál je určen pro Apple Silicon (stejně jako dosavadní sestavení).
+Jedna povinná kontrola při spuštění procesu. Bez sítě či při chybě ověření zůstávají funkce zamčené. Opakování je ruční. Po ověření aktuální verze se další kontroly neplánují. Vlastní SPUUserDriver nenabízí Skip ani Dismiss uživateli. Instalace přes Sparkle nahrazuje aktualizovanou kopii na stejném místě; nevyhledává ani nemaže jiné kopie na disku. Historie a média leží mimo bundle.
+
+Kanál 0.7.0 používá podepsaný ZIP v `instalace/` na main a raw URL v appcastu. Zveřejňujte zdroje, ZIP a odpovídající appcast v jednom commitu. Před publikací ověřte podpis nástrojem `publish_appcast.py` a upravte adresu enclosure na skutečné umístění archivu. Soukromý klíč do repozitáře nepatří.
+
+Kontrola aktualizací nenahrazuje licencování a nemůže zpětně vynutit politiku ve starých verzích bez brány.

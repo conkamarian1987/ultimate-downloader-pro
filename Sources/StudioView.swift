@@ -137,11 +137,7 @@ struct StudioView: View {
             }
             GroupBox("Aktualizace aplikace") {
                 VStack(alignment: .leading, spacing: 10) {
-                    Toggle("Automaticky kontrolovat nové verze", isOn: Binding(get: { updates.automaticChecks }, set: { updates.automaticChecks = $0 }))
-                    Toggle("Automaticky stahovat a instalovat aktualizace", isOn: Binding(get: { updates.automaticDownloads }, set: { updates.automaticDownloads = $0 }))
-                        .disabled(!updates.automaticChecks)
-                    Text("Instalace počká na dokončení fronty. Stažené soubory a nastavení zůstanou zachované.").font(.caption).foregroundStyle(secondaryText)
-                    Button("Zkontrolovat aktualizace…") { updates.check() }.disabled(!updates.canCheck)
+                    Text("Aktuální verze se povinně ověřuje při každém spuštění aplikace. Během používání další kontroly neprobíhají.").font(.caption).foregroundStyle(secondaryText)
                     if !updates.status.isEmpty { Text(updates.status).font(.callout) }
                 }.padding(12)
             }

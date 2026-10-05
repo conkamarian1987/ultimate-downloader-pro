@@ -3,6 +3,7 @@ import AppKit
 import UserNotifications
 
 @MainActor final class DownloadStore: ObservableObject {
+    var updatesBlocked = true
     @Published var jobs: [DownloadJob] = []
     @Published var tools = ToolPaths.current
     @Published var maintenance = false
@@ -39,7 +40,7 @@ import UserNotifications
             try data.write(to: historyURL, options: .atomic)
         } catch { message = "Historii nelze uložit: \(error.localizedDescription)" }
     }
-    func enqueue(text: String, profile: DownloadProfile, playlist: Bool, folder: String, trimStart: Double? = nil, trimEnd: Double? = nil) {
+    func enqueue(text: String, profile: DownloadProfile, playlist: Bool, folder: String, trimStart: Double? = nil, trimEnd: Double? = nil) { guard !updatesBlocked else { return };
         do {
             let urls = try DownloadCommand.validatedURLs(text)
             var isDirectory: ObjCBool = false
@@ -53,7 +54,7 @@ import UserNotifications
             save(); startNext()
         } catch { message = error.localizedDescription }
     }
-    func enqueueMedia(_ items: [MediaItem], profile: DownloadProfile, selector: String?, subtitles: String?, imageOptions: ImageOptions, folder: String, trimStart: Double? = nil, trimEnd: Double? = nil) {
+    func enqueueMedia(_ items: [MediaItem], profile: DownloadProfile, selector: String?, subtitles: String?, imageOptions: ImageOptions, folder: String, trimStart: Double? = nil, trimEnd: Double? = nil) { guard !updatesBlocked else { return };
         guard FileManager.default.isWritableFile(atPath:folder) else { message = "Cílová složka není zapisovatelná."; return }
         for item in items {
             guard (try? DownloadCommand.validatedURLs(item.url)) != nil else { continue }
@@ -67,7 +68,7 @@ import UserNotifications
         }
         save(); startNext()
     }
-    func enqueueHellspy(_ video: HellspyVideo, quality: String, folder: String) {
+    func enqueueHellspy(_ video: HellspyVideo, quality: String, folder: String) { guard !updatesBlocked else { return };
         guard FileManager.default.isWritableFile(atPath: folder) else { message = "Cílová složka není zapisovatelná."; return }
         var job = DownloadJob(url: "https://hellspy.to", profile: DownloadProfile.video[0], playlist: false, folder: folder)
         job.displayTitle = video.title
@@ -85,7 +86,7 @@ import UserNotifications
         content.body = job.displayTitle ?? job.profile.title; content.sound = .default
         UNUserNotificationCenter.current().add(UNNotificationRequest(identifier:job.id.uuidString,content:content,trigger:nil))
     }
-    func startNext() {
+    func startNext() { guard !updatesBlocked else { return };
         guard !busy, !paused, let index = jobs.indices.reversed().first(where: { jobs[$0].state == .queued }) else { return }
         tools = .current
         let jobToStart = jobs[index]
@@ -227,7 +228,7 @@ import UserNotifications
             jobs[i].state = .cancelled; jobs[i].detail = "Odebráno z fronty"; save()
         }
     }
-    func retry(_ job: DownloadJob) { var copy = job; copy.id = UUID(); copy.state = .queued; copy.progress = 0; copy.conversionStage = nil; copy.conversionProgress = nil; copy.files = []; copy.log = ""; copy.detail = "Čeká na spuštění"; jobs.insert(copy,at:0); save(); startNext() }
+    func retry(_ job: DownloadJob) { guard !updatesBlocked else { return }; var copy = job; copy.id = UUID(); copy.state = .queued; copy.progress = 0; copy.conversionStage = nil; copy.conversionProgress = nil; copy.files = []; copy.log = ""; copy.detail = "Čeká na spuštění"; jobs.insert(copy,at:0); save(); startNext() }
     func removeFromHistory(_ id: UUID) {
         guard let job = jobs.first(where: { $0.id == id }), job.state != .queued, job.state != .running else { return }
         jobs.removeAll { $0.id == id }
@@ -238,7 +239,7 @@ import UserNotifications
         save()
     }
     func togglePause() { paused.toggle(); if !paused { startNext() } }
-    func maintain(install: Bool) {
+    func maintain(install: Bool) { guard !updatesBlocked else { return };
         guard !busy else { return }
         tools = .current
         guard let brew = tools.brew else { message = "Nejprve nainstalujte Homebrew z brew.sh. Poté zde lze nainstalovat potřebné nástroje."; return }

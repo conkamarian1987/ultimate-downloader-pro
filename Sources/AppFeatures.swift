@@ -117,77 +117,118 @@ struct SavedMediaPreset: Codable, Identifiable {
 import Sparkle
 import Combine
 
-/// Keeps installation out of the download queue, including a paused queue.
-@MainActor final class AppUpdates: NSObject, ObservableObject, SPUUpdaterDelegate {
+/// A fresh process must verify the feed. No timer or offline unlock is used.
+@MainActor final class AppUpdates: NSObject, ObservableObject, SPUUpdaterDelegate, SPUUserDriver {
+    @Published private(set) var unlocked = false
     @Published private(set) var canCheck = false
-    @Published private(set) var status = ""
-    @Published var automaticChecks = true {
-        didSet { if controller != nil { controller.updater.automaticallyChecksForUpdates = automaticChecks } }
-    }
-    @Published var automaticDownloads = true {
-        didSet { if controller != nil { controller.updater.automaticallyDownloadsUpdates = automaticDownloads } }
-    }
-    private var controller: SPUStandardUpdaterController!
+    @Published private(set) var status = "Ověřuji aktuální verzi…"
+    @Published private(set) var canInstall = false
+    @Published private(set) var progress: Double?
+    private var updater: SPUUpdater!
     private var observation: AnyCancellable?
     private weak var store: DownloadStore?
-    private var deferredInstall: (() -> Void)?
-    private var waitTask: Task<Void, Never>?
+    private var installReply: ((SPUUserUpdateChoice) -> Void)?
+    private var expected: UInt64 = 0
+    private var received: UInt64 = 0
     override init() {
         super.init()
-        controller = SPUStandardUpdaterController(startingUpdater: false, updaterDelegate: self, userDriverDelegate: nil)
-        observation = controller.updater.publisher(for: \.canCheckForUpdates)
+        updater = SPUUpdater(hostBundle: .main, applicationBundle: .main, userDriver: self, delegate: self)
+        observation = updater.publisher(for: \.canCheckForUpdates)
             .receive(on: RunLoop.main).sink { [weak self] in self?.canCheck = $0 }
-        automaticChecks = controller.updater.automaticallyChecksForUpdates
-        automaticDownloads = controller.updater.automaticallyDownloadsUpdates
     }
     func connect(to store: DownloadStore) {
         guard self.store == nil else { return }
         self.store = store
-        do { try controller.updater.start() }
-        catch { status = "Aktualizace nelze spustit: \(error.localizedDescription)" }
+        // Override existing preferences too, including those saved by older versions.
+        updater.automaticallyChecksForUpdates = false
+        updater.automaticallyDownloadsUpdates = false
+        do { try updater.start(); updater.checkForUpdates() }
+        catch { fail(error) }
     }
     func check() {
-        guard canCheck else { return }
-        status = ""
-        controller.checkForUpdates(nil)
+        guard !unlocked, canCheck else { return }
+        status = "Ověřuji aktuální verzi…"; progress = nil
+        updater.checkForUpdates()
     }
-    private var queueIsIdle: Bool {
-        guard let store else { return false }
-        return !store.busy && store.waitingCount == 0 && !store.mediaPlaybackActive
+    func install() {
+        guard let reply = installReply else { return }
+        installReply = nil; canInstall = false
+        status = "Připravuji aktualizaci…"; reply(.install)
     }
-    private func deferInstallation(_ handler: @escaping () -> Void) {
-        deferredInstall = handler
-        status = "Aktualizace je připravena. Instalace čeká na dokončení fronty a zavření přehrávače."
-        waitTask?.cancel()
-        waitTask = Task { [weak self] in
-            while !Task.isCancelled {
-                try? await Task.sleep(for: .seconds(1))
-                guard !Task.isCancelled, let self else { return }
-                if self.queueIsIdle {
-                    let install = self.deferredInstall
-                    self.deferredInstall = nil
-                    self.status = "Instaluji aktualizaci…"
-                    self.store?.save()
-                    install?()
-                    return
-                }
-            }
+    private func fail(_ error: Error) {
+        guard !unlocked else { return }
+        canInstall = false; installReply = nil; progress = nil
+        status = "Ověření nebo aktualizace se nezdařily. Připojte se k internetu a zkuste to znovu.\n\(error.localizedDescription)"
+    }
+    func show(_ request: SPUUpdatePermissionRequest, reply: @escaping (SUUpdatePermissionResponse) -> Void) {
+        reply(SUUpdatePermissionResponse(automaticUpdateChecks: false, sendSystemProfile: false))
+    }
+    func showUserInitiatedUpdateCheck(cancellation: @escaping () -> Void) {
+        status = "Ověřuji aktuální verzi…"; progress = nil
+    }
+    func showUpdateFound(with appcastItem: SUAppcastItem, state: SPUUserUpdateState, reply: @escaping (SPUUserUpdateChoice) -> Void) {
+        guard !appcastItem.isInformationOnlyUpdate else {
+            status = "Tato aktualizace vyžaduje ruční instalaci. Navštivte stránku projektu na GitHubu."
+            reply(.dismiss); return
         }
+        status = "Je vyžadována verze \(appcastItem.displayVersionString). Aktualizace nahradí tuto kopii aplikace a zachová nastavení i stažené soubory."
+        installReply = reply; canInstall = true
     }
-    func updater(_ updater: SPUUpdater, shouldPostponeRelaunchForUpdate item: SUAppcastItem,
-                 untilInvokingBlock installHandler: @escaping () -> Void) -> Bool {
-        guard !queueIsIdle else { store?.save(); return false }
-        deferInstallation(installHandler)
-        return true
+    func showUpdateReleaseNotes(with downloadData: SPUDownloadData) {}
+    func showUpdateReleaseNotesFailedToDownloadWithError(_ error: Error) {}
+    func showUpdateNotFoundWithError(_ error: Error, acknowledgement: @escaping () -> Void) {
+        let info = (error as NSError).userInfo
+        let reason = (info[SPUNoUpdateFoundReasonKey] as? NSNumber)?.intValue
+        if (error as NSError).domain == SUSparkleErrorDomain, (error as NSError).code == 1001,
+           (reason == 1 || reason == 2),
+           let item = info[SPULatestAppcastItemFoundKey] as? SUAppcastItem,
+           let build = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String,
+           item.versionString.compare(build, options: .numeric) != .orderedDescending {
+            unlocked = true; store?.updatesBlocked = false
+            status = "Aktuální verze byla ověřena při spuštění."
+        } else { fail(error) }
+        acknowledgement()
     }
-    func updater(_ updater: SPUUpdater, willInstallUpdateOnQuit item: SUAppcastItem,
-                 immediateInstallationBlock immediateInstallHandler: @escaping () -> Void) -> Bool {
-        // Always defer one event loop, so the delegate returns before installation starts.
-        deferInstallation(immediateInstallHandler)
-        return true
+    func showUpdaterError(_ error: Error, acknowledgement: @escaping () -> Void) { fail(error); acknowledgement() }
+    func showDownloadInitiated(cancellation: @escaping () -> Void) {
+        expected = 0; received = 0; progress = nil; status = "Stahuji aktualizaci…"
     }
+    func showDownloadDidReceiveExpectedContentLength(_ length: UInt64) { expected = length }
+    func showDownloadDidReceiveData(ofLength length: UInt64) {
+        received += length
+        if expected > 0 { progress = min(1, Double(received) / Double(expected)) }
+    }
+    func showDownloadDidStartExtractingUpdate() { status = "Ověřuji a rozbaluji aktualizaci…"; progress = nil }
+    func showExtractionReceivedProgress(_ value: Double) { progress = value }
+    func showReady(toInstallAndRelaunch reply: @escaping (SPUUserUpdateChoice) -> Void) { store?.save(); reply(.install) }
+    func showInstallingUpdate(withApplicationTerminated terminated: Bool, retryTerminatingApplication retry: @escaping () -> Void) {
+        status = "Instaluji aktualizaci a restartuji aplikaci…"; progress = nil
+    }
+    func showUpdateInstalledAndRelaunched(_ relaunched: Bool, acknowledgement: @escaping () -> Void) { acknowledgement() }
+    func dismissUpdateInstallation() { installReply = nil; canInstall = false; progress = nil }
     func updater(_ updater: SPUUpdater, didAbortWithError error: Error) {
-        waitTask?.cancel(); deferredInstall = nil
-        status = "Aktualizace nebyla dokončena: \(error.localizedDescription)"
+        // Sparkle also ends a successful no-update cycle with this informational error.
+        if (error as NSError).domain == SUSparkleErrorDomain && (error as NSError).code == 1001 { return }
+        fail(error)
+    }
+}
+
+struct RequiredUpdateView: View {
+    @EnvironmentObject private var updates: AppUpdates
+    var body: some View {
+        VStack(spacing: 22) {
+            Image(systemName: "arrow.down.circle").font(.system(size: 52)).foregroundStyle(.teal)
+            Text("Ultimate Downloader Pro").font(.largeTitle.bold())
+            Text("Před spuštěním je nutné ověřit aktuální verzi.").font(.title3)
+            Text(updates.status).multilineTextAlignment(.center).textSelection(.enabled)
+            if let progress = updates.progress { ProgressView(value: progress) }
+            else if !updates.canCheck && !updates.canInstall { ProgressView() }
+            HStack {
+                if updates.canInstall { Button("Aktualizovat a restartovat") { updates.install() }.buttonStyle(.borderedProminent) }
+                else { Button("Zkusit znovu") { updates.check() }.disabled(!updates.canCheck) }
+                Button("Ukončit") { NSApp.terminate(nil) }
+            }
+            Text("Kontrola probíhá pouze při spuštění. Bez úspěšného ověření nelze aplikaci používat.").font(.caption).foregroundStyle(.secondary)
+        }.padding(48).frame(maxWidth: 680).frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
