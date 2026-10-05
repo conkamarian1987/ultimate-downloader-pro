@@ -2,6 +2,8 @@
 
 ## Beta 0.6.0 — sestavení 10 (5. 10. 2026)
 
+- Doplněno šest aktuálních snímků rozhraní: Z odkazu, YouTube, Hellspy, přehrávač a průběh stahování.
+
 - Nová záložka Hellspy s vyhledáváním přímo v aplikaci.
 - Správné stránkování podle ukazatele serveru, automatické načítání dalších výsledků a odstranění duplicit.
 - Přehrát, Stáhnout a dostupná kvalita přímo u každé karty; automatický přesun k přehrávači.

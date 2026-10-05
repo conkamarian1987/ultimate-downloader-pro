@@ -87,19 +87,31 @@ Záložka **Fronta** ukazuje počet čekajících a spuštěných úloh, průbě
 
 ## Obrázky rozhraní
 
-Níže jsou starší skutečné snímky verze 0.4.0; nezobrazují novou záložku Hellspy. Snímky 0.6.0 budou doplněny po jejich pořízení.
+Skutečné snímky verze **Beta 0.6.0 (10)** dodané autorem 5. 10. 2026.
 
-### Z odkazu — formát a kvalita přímo pod odkazem
+### Z odkazu — formát a kvalita
 
-![Stahování z odkazu](docs/images/odkaz.png)
+![Z odkazu — formát a kvalita](docs/images/odkaz-0.6.0.png)
 
-### YouTube — vyhledávání a přehrávání
+### YouTube — volby stažení
 
-![Vyhledávání YouTube](docs/images/youtube.png)
+![YouTube — volby stažení](docs/images/youtube-volby-0.6.0.png)
 
-### Fronta — průběh a historie stahování
+### YouTube — výsledky vyhledávání
 
-![Fronta a historie](docs/images/fronta.png)
+![YouTube — výsledky vyhledávání](docs/images/youtube-vysledky-0.6.0.png)
+
+### Hellspy — výsledky, kvalita a ovládání u každého videa
+
+![Hellspy — výsledky, kvalita a ovládání u každého videa](docs/images/hellspy-vysledky-0.6.0.png)
+
+### Fronta — procenta, přenesená velikost a rychlost
+
+![Fronta — procenta, přenesená velikost a rychlost](docs/images/fronta-0.6.0.png)
+
+### Hellspy — vestavěný přehrávač VLC
+
+![Hellspy — vestavěný přehrávač VLC](docs/images/hellspy-prehravac-0.6.0.png)
 
 ## Potřebné nástroje
 
