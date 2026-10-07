@@ -97,31 +97,35 @@ Záložka **Fronta** ukazuje počet čekajících a spuštěných úloh, průbě
 
 ## Obrázky rozhraní
 
-Skutečné snímky verze **Beta 0.6.0 (10)** dodané autorem 5. 10. 2026.
+Skutečné snímky Encore **0.8.0 (13)** dodané autorem 7. 10. 2026.
 
 ### Z odkazu — formát a kvalita
 
-![Z odkazu — formát a kvalita](docs/images/odkaz-0.6.0.png)
+![Z odkazu — formát a kvalita](docs/images/encore-odkaz-0.8.0.png)
 
-### YouTube — volby stažení
+### YouTube — vyhledávání
 
-![YouTube — volby stažení](docs/images/youtube-volby-0.6.0.png)
+![YouTube — vyhledávání](docs/images/encore-youtube-0.8.0.png)
 
 ### YouTube — výsledky vyhledávání
 
-![YouTube — výsledky vyhledávání](docs/images/youtube-vysledky-0.6.0.png)
+![YouTube — výsledky vyhledávání](docs/images/encore-youtube-vysledky-0.8.0.png)
 
-### Hellspy — výsledky, kvalita a ovládání u každého videa
+### YouTube — náhled přehrávače a volby stažení
 
-![Hellspy — výsledky, kvalita a ovládání u každého videa](docs/images/hellspy-vysledky-0.6.0.png)
+![YouTube — náhled přehrávače a volby stažení](docs/images/encore-youtube-prehravac-0.8.0.png)
 
-### Fronta — procenta, přenesená velikost a rychlost
+### Hellspy — vyhledávání
 
-![Fronta — procenta, přenesená velikost a rychlost](docs/images/fronta-0.6.0.png)
+![Hellspy — vyhledávání](docs/images/encore-hellspy-0.8.0.png)
 
-### Hellspy — vestavěný přehrávač VLC
+### Hellspy — výsledky a dostupné kvality
 
-![Hellspy — vestavěný přehrávač VLC](docs/images/hellspy-prehravac-0.6.0.png)
+![Hellspy — výsledky a dostupné kvality](docs/images/encore-hellspy-vysledky-0.8.0.png)
+
+### Fronta a historie
+
+![Fronta a historie](docs/images/encore-fronta-0.8.0.png)
 
 ## Potřebné nástroje
 
