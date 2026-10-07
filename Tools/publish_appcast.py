@@ -34,7 +34,7 @@ def main():
     ET.SubElement(channel,'title').text='Encore'
     item=ET.SubElement(channel,'item');ET.SubElement(item,'title').text=version
     for field,value in [('version',build),('shortVersionString',version),('minimumSystemVersion',info.get('LSMinimumSystemVersion','14.0'))]:ET.SubElement(item,'{'+NS+'}'+field).text=value
-    url='https://github.com/conkamarian1987/ultimate-downloader-pro/releases/download/'+urllib.parse.quote(a.tag,safe='')+'/'+name
+    url='https://github.com/conkamarian1987/encore/releases/download/'+urllib.parse.quote(a.tag,safe='')+'/'+name
     ET.SubElement(item,'enclosure',{'url':url,'length':str(archive.stat().st_size),'type':'application/octet-stream','{'+NS+'}edSignature':manifest['signature']})
     a.feed.parent.mkdir(parents=True,exist_ok=True)
     ET.indent(rss);temp=a.feed.with_suffix('.tmp');ET.ElementTree(rss).write(temp,encoding='utf-8',xml_declaration=True);temp.replace(a.feed)

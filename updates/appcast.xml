@@ -7,7 +7,7 @@
       <sparkle:version>13</sparkle:version>
       <sparkle:shortVersionString>0.8.0</sparkle:shortVersionString>
       <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-      <enclosure url="https://raw.githubusercontent.com/conkamarian1987/ultimate-downloader-pro/main/instalace/Encore-0.8.0.zip" length="39019434" type="application/octet-stream" sparkle:edSignature="dYVqwGVV2xnHcZiX/L16IvGzIBHkhCPnwrTkckGEnGxZRB7fHIaF1Mlrke2uRO2t0r2d4d/ZpF96RfR4YnyGAA==" />
+      <enclosure url="https://raw.githubusercontent.com/conkamarian1987/encore/main/instalace/Encore-0.8.0.zip" length="39019434" type="application/octet-stream" sparkle:edSignature="dYVqwGVV2xnHcZiX/L16IvGzIBHkhCPnwrTkckGEnGxZRB7fHIaF1Mlrke2uRO2t0r2d4d/ZpF96RfR4YnyGAA==" />
       <description>Ultimate Downloader Pro se mění na Encore. Nová ikona, levý panel a Liquid Glass. Aktualizace nahradí původní aplikaci a zachová historii i nastavení.</description>
     </item>
   </channel>

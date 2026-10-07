@@ -1,0 +1,1 @@
+2026-10-07: ultimate-downloader-pro -> encore. Old update feed remains compatible through the GitHub repository redirect.

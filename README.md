@@ -23,7 +23,7 @@ Encore (dříve Ultimate Downloader Pro) spojuje vyhledávání, přehrávání 
 
 Aktuální balíček **0.8.0 (13)** je pro Macy s **Apple silicon (M1 a novější)**. VLC je součástí aplikace.
 
-### [Stáhnout Encore Beta 0.8.0 — sestavení 13](https://github.com/conkamarian1987/ultimate-downloader-pro/raw/refs/heads/main/instalace/Encore-0.8.0.zip)
+### [Stáhnout Encore Beta 0.8.0 — sestavení 13](https://github.com/conkamarian1987/encore/raw/refs/heads/main/instalace/Encore-0.8.0.zip)
 
 **Přecházíte z Ultimate Downloader Pro?** Verze s aktualizátorem Sparkle přejdou na Encore přes původní aktualizační kanál. Zachovává se identifikátor aplikace, podpisový klíč, historie, relace i nastavení. Aktualizátor nahradí původní balíček na jeho místě; jeho název souboru ve Finderu může zůstat původní. Pro nové instalace se používá **Encore.app**. Fastshare, Webshare, online rádia a Google Disk jsou plánované služby a zatím nejsou součástí aplikace.
 
@@ -169,7 +169,7 @@ Podrobnosti jsou v [návodu pro sestavení](docs/SESTAVENI.md). Příspěvky a h
 
 ## Ověření a známá omezení
 
-Release sestavení 0.8.0 (13) pro `arm64` a kontrola lokálního podpisu prošly 5. 10. 2026. ZIP má ověřený podpis Ed25519. Testy brány i předání instalace prošly. Skutečný test na oddělené aplikaci se stejným kódem potvrdil automatické ukončení starého procesu, nahrazení na stejném místě, odstranění souboru ze staré verze a spuštění nového procesu. Podrobnosti a hranice ověření: [test instalace](docs/TEST-INSTALACE-0.8.0.md).
+Release sestavení 0.8.0 (13) pro `arm64` a kontrola lokálního podpisu prošly 7. 10. 2026. ZIP má ověřený podpis Ed25519. Testy brány i předání instalace prošly. Skutečný test na oddělené aplikaci se stejným kódem potvrdil automatické ukončení starého procesu, nahrazení na stejném místě, odstranění souboru ze staré verze a spuštění nového procesu. Podrobnosti a hranice ověření: [test instalace](docs/TEST-INSTALACE-0.8.0.md).
 
 Aplikace má ad-hoc podpis, není podepsaná Apple Developer ID ani notarizovaná. Povinná aktualizace není licenční systém a neblokuje starší vydání, která tuto kontrolu ještě neměla.
 
