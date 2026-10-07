@@ -54,7 +54,7 @@
 			<key>isa</key>
 			<string>PBXFileReference</string>
 			<key>path</key>
-			<string>Ultimate Downloader Pro.app</string>
+			<string>Encore.app</string>
 			<key>sourceTree</key>
 			<string>BUILT_PRODUCTS_DIR</string>
 		</dict>
@@ -167,6 +167,12 @@
 				<string>0000000000000000000001C3</string>
 				<string>B50000000000000000000000</string>
 				<string>B50000000000000000000001</string>
+				<string>C80000000000000000000001</string>
+				<string>C80000000000000000000003</string>
+				<string>C90000000000000000000001</string>
+				<string>C90000000000000000000003</string>
+				<string>C90000000000000000000005</string>
+				<string>CA0000000000000000000001</string>
 			</array>
 			<key>isa</key>
 			<string>PBXResourcesBuildPhase</string>
@@ -222,7 +228,7 @@
 				<key>PRODUCT_BUNDLE_IDENTIFIER</key>
 				<string>cz.ultimate.downloaderpro</string>
 				<key>PRODUCT_NAME</key>
-				<string>Ultimate Downloader Pro</string>
+				<string>Encore</string>
 				<key>SDKROOT</key>
 				<string>macosx</string>
 				<key>SWIFT_OPTIMIZATION_LEVEL</key>
@@ -266,7 +272,7 @@
 				<key>PRODUCT_BUNDLE_IDENTIFIER</key>
 				<string>cz.ultimate.downloaderpro</string>
 				<key>PRODUCT_NAME</key>
-				<string>Ultimate Downloader Pro</string>
+				<string>Encore</string>
 				<key>SDKROOT</key>
 				<string>macosx</string>
 				<key>SWIFT_OPTIMIZATION_LEVEL</key>
@@ -965,6 +971,114 @@
 			<string>PBXBuildFile</string>
 			<key>fileRef</key>
 			<string>B40000000000000000000001</string>
+		</dict>
+		<key>C80000000000000000000000</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>image.png</string>
+			<key>path</key>
+			<string>YouTubeService.png</string>
+			<key>sourceTree</key>
+			<string>SOURCE_ROOT</string>
+		</dict>
+		<key>C80000000000000000000001</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+			<key>fileRef</key>
+			<string>C80000000000000000000000</string>
+		</dict>
+		<key>C80000000000000000000002</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>image.png</string>
+			<key>path</key>
+			<string>HellspyService.png</string>
+			<key>sourceTree</key>
+			<string>SOURCE_ROOT</string>
+		</dict>
+		<key>C80000000000000000000003</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+			<key>fileRef</key>
+			<string>C80000000000000000000002</string>
+		</dict>
+		<key>C90000000000000000000000</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>image.png</string>
+			<key>path</key>
+			<string>YouTubeWordmarkDark.png</string>
+			<key>sourceTree</key>
+			<string>SOURCE_ROOT</string>
+		</dict>
+		<key>C90000000000000000000001</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+			<key>fileRef</key>
+			<string>C90000000000000000000000</string>
+		</dict>
+		<key>C90000000000000000000002</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>image.png</string>
+			<key>path</key>
+			<string>YouTubeWordmarkLight.png</string>
+			<key>sourceTree</key>
+			<string>SOURCE_ROOT</string>
+		</dict>
+		<key>C90000000000000000000003</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+			<key>fileRef</key>
+			<string>C90000000000000000000002</string>
+		</dict>
+		<key>C90000000000000000000004</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>image.png</string>
+			<key>path</key>
+			<string>HellspyWordmark.png</string>
+			<key>sourceTree</key>
+			<string>SOURCE_ROOT</string>
+		</dict>
+		<key>C90000000000000000000005</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+			<key>fileRef</key>
+			<string>C90000000000000000000004</string>
+		</dict>
+		<key>CA0000000000000000000000</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>image.png</string>
+			<key>path</key>
+			<string>EncoreIcon.png</string>
+			<key>sourceTree</key>
+			<string>SOURCE_ROOT</string>
+		</dict>
+		<key>CA0000000000000000000001</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+			<key>fileRef</key>
+			<string>CA0000000000000000000000</string>
 		</dict>
 	</dict>
 	<key>rootObject</key>

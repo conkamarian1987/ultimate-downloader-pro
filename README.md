@@ -1,25 +1,31 @@
 <div align="center">
-  <img src="docs/images/app-icon.png" alt="Ultimate Downloader Pro" width="160">
+  <img src="docs/images/app-icon.png" alt="Encore" width="160">
 
-  # Ultimate Downloader Pro
+  # Encore
 
-  **Nativní správce stahování médií pro macOS**
+  **Video, hudba a oblíbené služby na jednom místě**
 
-  ![Verze](https://img.shields.io/badge/verze-Beta%200.7.1%20%2812%29-13a89e)
+  ![Verze](https://img.shields.io/badge/verze-Beta%200.8.0%20%2813%29-13a89e)
   ![macOS](https://img.shields.io/badge/macOS-14%2B-111827?logo=apple)
   ![Architektura](https://img.shields.io/badge/Apple%20silicon-arm64-334155)
   ![Swift](https://img.shields.io/badge/Swift-SwiftUI-F05138?logo=swift&logoColor=white)
 </div>
 
-Ultimate Downloader Pro spojuje stahování videí, audia a obrázků do jedné přehledné aplikace. Nabízí průzkum médií na stránce, výběr kvality a formátu, společnou frontu, historii, protokoly a přihlášení ke službám ve vlastním bezpečně odděleném okně.
+Encore (dříve Ultimate Downloader Pro) spojuje vyhledávání, přehrávání a stahování videí, audia a obrázků do jedné přehledné aplikace. Nabízí průzkum médií na stránce, výběr kvality a formátu, společnou frontu, historii, protokoly a přihlášení ke službám ve vlastním bezpečně odděleném okně.
+
+## Ultimate Downloader Pro se mění na Encore
+
+**Stejná aplikace, nová identita.** Encore přináší novou ikonu, přehledný levý panel a sjednocený vzhled ve stylu Liquid Glass. Původní uživatelé přejdou aktualizací přes dosavadní kanál a zachovají si nastavení i historii.
 
 > **Beta verze:** aplikace je určena k testování. Funkčnost jednotlivých služeb se může měnit podle jejich webu a použitých extraktorů.
 
 ## Stažení a instalace
 
-Aktuální balíček **0.7.1 (12)** je pro Macy s **Apple silicon (M1 a novější)**. VLC je součástí aplikace.
+Aktuální balíček **0.8.0 (13)** je pro Macy s **Apple silicon (M1 a novější)**. VLC je součástí aplikace.
 
-### [Stáhnout Ultimate Downloader Pro Beta 0.7.1 — sestavení 12](https://github.com/conkamarian1987/ultimate-downloader-pro/raw/refs/heads/main/instalace/UltimateDownloaderPro-0.7.1.zip)
+### [Stáhnout Encore Beta 0.8.0 — sestavení 13](https://github.com/conkamarian1987/ultimate-downloader-pro/raw/refs/heads/main/instalace/Encore-0.8.0.zip)
+
+**Přecházíte z Ultimate Downloader Pro?** Verze s aktualizátorem Sparkle přejdou na Encore přes původní aktualizační kanál. Zachovává se identifikátor aplikace, podpisový klíč, historie, relace i nastavení. Aktualizátor nahradí původní balíček na jeho místě; jeho název souboru ve Finderu může zůstat původní. Pro nové instalace se používá **Encore.app**. Fastshare, Webshare, online rádia a Google Disk jsou plánované služby a zatím nejsou součástí aplikace.
 
 **Máte verzi 0.5.0 nebo 0.6.0?** V nabídce aplikace zvolte **Zkontrolovat aktualizace…**. Sparkle ověří podpis balíčku a nahradí aktualizovanou kopii aplikace na jejím místě.
 
@@ -31,7 +37,7 @@ Pro první instalaci:
 
 1. Stáhněte ZIP a rozbalte jej dvojklikem ve Finderu.
 2. Ukončete starší verzi aplikace.
-3. Přetáhněte **Ultimate Downloader Pro.app** do složky **Aplikace** a potvrďte nahrazení.
+3. Přetáhněte **Encore.app** do složky **Aplikace** a potvrďte nahrazení.
 4. Spusťte aplikaci ze složky Aplikace.
 
 Instalátor má lokální podpis a zatím není notarizován společností Apple. Při prvním spuštění proto může macOS vyžadovat potvrzení v **Nastavení systému → Soukromí a zabezpečení**.
@@ -41,7 +47,7 @@ Kontrolní SHA-256 je uveden v souboru [SHA256SUMS.txt](instalace/SHA256SUMS.txt
 ## Hlavní funkce
 
 - video, audio a obrázky v jedné aplikaci;
-- čtyři záložky **Z odkazu**, **YouTube**, **Hellspy** a **Fronta**;
+- levý panel se sekcemi **Z odkazu**, **YouTube**, **Hellspy** a **Fronta**;
 - vyhledávání Hellspy se stránkováním, kvalitou a tlačítky Přehrát / Stáhnout u každého výsledku;
 - vestavěný VLC přehrávač se zvukovými stopami, titulky, poměrem stran, ořezem, přiblížením a časovým posunem;
 - celá obrazovka pouze pro video; kurzor a ovládání se při přehrávání skryjí po třech sekundách nečinnosti;
@@ -63,7 +69,7 @@ Kontrolní SHA-256 je uveden v souboru [SHA256SUMS.txt](instalace/SHA256SUMS.txt
 - světlý, tmavý a systémový motiv;
 - rozšíření **Sdílet** pro předání odkazu z jiných aplikací.
 
-Ve verzi **Beta 0.6.0 (10)** přibyla záložka Hellspy a vestavěný přehrávač VLC. Nastavení otevřete ozubeným kolečkem. Historie, uložené profily a nastavení zůstávají zachované. Podrobnosti obsahuje [CHANGELOG.md](CHANGELOG.md).
+Ve verzi **Beta 0.6.0 (10)** přibyla záložka Hellspy a vestavěný přehrávač VLC. Nastavení otevřete spodní ikonou v levém panelu. Historie, uložené profily a nastavení zůstávají zachované. Podrobnosti obsahuje [CHANGELOG.md](CHANGELOG.md).
 
 ## Jak aplikaci používat
 
@@ -87,7 +93,7 @@ Tlačítkem celé obrazovky zvětšíte samotné video. Po třech sekundách ne�
 
 ### Fronta a nastavení
 
-Záložka **Fronta** ukazuje počet čekajících a spuštěných úloh, průběh stahování i převodu, historii a protokoly. Mazání historie neodstraňuje stažené soubory. Ozubené kolečko otevírá motiv, nástroje, schránku, oznámení a přihlášení ke službám.
+Záložka **Fronta** ukazuje počet čekajících a spuštěných úloh, průběh stahování i převodu, historii a protokoly. Mazání historie neodstraňuje stažené soubory. Spodní ikona levého panelu otevírá nastavení motivu, nástrojů, schránky, oznámení a přihlášení ke službám.
 
 ## Obrázky rozhraní
 
@@ -163,8 +169,8 @@ Podrobnosti jsou v [návodu pro sestavení](docs/SESTAVENI.md). Příspěvky a h
 
 ## Ověření a známá omezení
 
-Release sestavení 0.7.1 (12) pro `arm64` a kontrola lokálního podpisu prošly 5. 10. 2026. ZIP má ověřený podpis Ed25519. Testy brány i předání instalace prošly. Skutečný test na oddělené aplikaci se stejným kódem potvrdil automatické ukončení starého procesu, nahrazení na stejném místě, odstranění souboru ze staré verze a spuštění nového procesu. Podrobnosti a hranice ověření: [test instalace](docs/TEST-INSTALACE-0.7.1.md).
+Release sestavení 0.8.0 (13) pro `arm64` a kontrola lokálního podpisu prošly 5. 10. 2026. ZIP má ověřený podpis Ed25519. Testy brány i předání instalace prošly. Skutečný test na oddělené aplikaci se stejným kódem potvrdil automatické ukončení starého procesu, nahrazení na stejném místě, odstranění souboru ze staré verze a spuštění nového procesu. Podrobnosti a hranice ověření: [test instalace](docs/TEST-INSTALACE-0.8.0.md).
 
 Aplikace má ad-hoc podpis, není podepsaná Apple Developer ID ani notarizovaná. Povinná aktualizace není licenční systém a neblokuje starší vydání, která tuto kontrolu ještě neměla.
 
-Podrobnosti vydání: [0.7.1](docs/VYDANI-0.7.1.md). Návod: [Tools/AKTUALIZACE.md](Tools/AKTUALIZACE.md).
+Podrobnosti vydání: [0.8.0](docs/VYDANI-0.8.0.md). Návod: [Tools/AKTUALIZACE.md](Tools/AKTUALIZACE.md).

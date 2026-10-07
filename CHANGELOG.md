@@ -1,5 +1,14 @@
 # Změny
 
+## Encore Beta 0.8.0 — sestavení 13 (7. 10. 2026)
+
+- Ultimate Downloader Pro se mění na Encore s novou ikonou a sjednoceným vzhledem.
+- Levý ikonový panel, názvy při najetí, samostatná stránka nastavení a čitelnější modrá tlačítka.
+- Systémový Liquid Glass na macOS 26+, alternativa pro starší systémy a přístupnost.
+- Originální ikony a loga YouTube a Hellspy.
+- Stejný identifikátor aplikace, aktualizační kanál, podpisový klíč a datové úložiště umožňují přechod z původních instalací.
+- Ověřen skutečný test instalace přejmenovaného balíčku, odstranění starého obsahu a restart nové verze.
+
 ## Beta 0.7.1 — sestavení 12 (5. 10. 2026)
 
 - Původní aplikace se automaticky ukončí po potvrzení připravenosti externího instalátoru.

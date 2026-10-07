@@ -45,15 +45,16 @@ struct HellspyView: View {
         ScrollViewReader { scroll in
             ScrollView {
                 VStack(alignment: .leading, spacing: 18) {
-                    Text("Hellspy").font(.largeTitle.bold()).id("top")
-                    HStack {
-                        TextField("Název filmu nebo videa", text: $browser.query).textFieldStyle(.roundedBorder).onSubmit { browser.search() }
-                        Button("Vyhledat", systemImage: "magnifyingglass") { browser.search() }.disabled(browser.query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                    StudioServiceHeading(service:"Hellspy", subtitle:"Prohlížejte, přehrávejte a ukládejte na jednom místě.").id("top")
+                    HStack(spacing:14) {
+                        Image(systemName:"magnifyingglass").font(.title3).foregroundStyle(.secondary)
+                        TextField("Název filmu nebo videa", text: $browser.query).textFieldStyle(.plain).font(.system(size:15)).onSubmit { browser.search() }
+                        Button("Vyhledat", systemImage: "magnifyingglass") { browser.search() }.buttonStyle(NeonButtonStyle()).disabled(browser.query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                         if browser.busy { ProgressView().controlSize(.small); Button("Zrušit") { browser.cancel() } }
-                    }
+                    }.padding(10).padding(.leading,8).studioCard()
                     if !browser.error.isEmpty { Text(browser.error).foregroundStyle(.secondary) }
                     if !player.title.isEmpty {
-                        NativePlayerView(player: player).padding(14).background(.primary.opacity(0.04), in: RoundedRectangle(cornerRadius: 14)).id("player")
+                        NativePlayerView(player: player).padding(14).studioCard().id("player")
                     }
                     if !browser.videos.isEmpty { Text("Načteno \(browser.videos.count) videí").font(.caption).foregroundStyle(.secondary) }
                     LazyVGrid(columns: [GridItem(.adaptive(minimum: 260), spacing: 16)], spacing: 16) {
@@ -106,7 +107,7 @@ private struct HellspyVideoCard: View {
             }.disabled(busy)
             if busy { ProgressView().controlSize(.small) }
             if !message.isEmpty { Text(message).font(.caption).foregroundStyle(.secondary) }
-        }.padding(12).background(Color.primary.opacity(0.04), in: RoundedRectangle(cornerRadius: 12))
+        }.padding(12).studioCard()
         .onChange(of: active) { _, value in if !value { task?.cancel(); busy = false } }
         .onDisappear { task?.cancel(); busy = false }
     }

@@ -3,7 +3,7 @@ import UniformTypeIdentifiers
 
 final class ShareViewController: NSViewController {
     private let field = NSTextField(wrappingLabelWithString:"Načítám sdílený odkaz…")
-    private let button = NSButton(title:"Otevřít v Ultimate Downloader",target:nil,action:nil)
+    private let button = NSButton(title:"Otevřít v Encore",target:nil,action:nil)
     private var link: String?
     override func loadView() {
         view = NSView(frame:NSRect(x:0,y:0,width:440,height:180))

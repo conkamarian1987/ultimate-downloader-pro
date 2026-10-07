@@ -1,7 +1,7 @@
 import SwiftUI
 import AppKit
 
-private let neon = Color(red:0.15,green:0.78,blue:0.71)
+private let studioBlue = Color(nsColor:.systemBlue)
 struct MediaSelection: Identifiable { let id = UUID(); let items: [MediaItem]; var playlistURL: String? = nil }
 struct PlayerSelection: Identifiable { var id: String { url.absoluteString }; let url: URL }
 
@@ -14,52 +14,58 @@ struct StudioView: View {
     @AppStorage("theme") private var theme = "system"
     @AppStorage("destination") private var folder = FileManager.default.urls(for:.downloadsDirectory,in:.userDomainMask)[0].path
     @State private var route = "scan"
-    @State private var showSettings = false
     @State private var input = ""
     @State private var player: PlayerSelection?
     @State private var logJob: DownloadJob?
     @State private var showClearHistoryConfirmation = false
-    private var background: Color { scheme == .dark ? Color(red:0.035,green:0.05,blue:0.085) : Color(red:0.94,green:0.96,blue:0.98) }
+    private var background: Color { StudioColors.background(scheme) }
     private var surface: Color { scheme == .dark ? Color.white.opacity(0.045) : .white }
-    private var accent: Color { scheme == .dark ? neon : Color(red:0.0,green:0.38,blue:0.34) }
+    private var accent: Color { studioBlue }
     private var secondaryText: Color { scheme == .dark ? Color.white.opacity(0.70) : Color(red:0.24,green:0.27,blue:0.30) }
     private var tertiaryText: Color { scheme == .dark ? Color.white.opacity(0.50) : Color(red:0.34,green:0.37,blue:0.40) }
     var body: some View {
-        VStack(spacing:0) {
-            HStack(spacing:16) {
-                Label("Ultimate Downloader Pro", systemImage:"arrow.down.square.fill").font(.headline)
-                Spacer()
+        HStack(spacing:0) {
+            VStack(spacing:14) {
+                Image(nsImage:StudioServiceImages.images["EncoreIcon"] ?? NSImage()).resizable().scaledToFit().frame(width:38,height:38)
+                    .padding(.bottom,24).accessibilityHidden(true)
                 nav("scan", "Z odkazu", "link")
                 nav("youtube", "YouTube", "play.rectangle")
                 nav("hellspy", "Hellspy", "film")
                 nav("queue", "Fronta", "arrow.down.circle", badge:store.waitingCount)
-                Spacer()
-                Button { showSettings = true } label: { Image(systemName:"gearshape").font(.title3) }.help("Nastavení")
-            }.padding(18)
-            Divider()
-            ZStack {
-                MediaWorkspace(youtube:false, incoming:$input, folder:folder, active:route == "scan")
-                    .opacity(route == "scan" ? 1 : 0).allowsHitTesting(route == "scan").accessibilityHidden(route != "scan")
-                MediaWorkspace(youtube:true, incoming:.constant(""), folder:folder, active:route == "youtube")
-                    .opacity(route == "youtube" ? 1 : 0).allowsHitTesting(route == "youtube").accessibilityHidden(route != "youtube")
-                HellspyView(folder: folder, active: route == "hellspy")
-                    .opacity(route == "hellspy" ? 1 : 0).allowsHitTesting(route == "hellspy").accessibilityHidden(route != "hellspy")
-                if route == "queue" { ScrollView { queue.padding(28) }.background(background) }
-            }
-            if let link = clipboard.candidate {
-                HStack { Image(systemName:"doc.on.clipboard"); Text(link).lineLimit(1); Spacer(); Button("Použít odkaz") { input = link; route = "scan"; clipboard.candidate = nil }; Button("Zavřít") { clipboard.candidate = nil } }.padding(12)
+                Spacer(minLength:24)
+                nav("settings", "Nastavení", "slider.horizontal.3")
+            }.padding(.top,24).padding(.bottom,20).frame(width:80)
+                .frame(maxHeight:.infinity).background(.regularMaterial)
+            Rectangle().fill(Color.primary.opacity(0.06)).frame(width:1)
+            VStack(spacing:0) {
+                HStack {
+                    Text("Encore").font(.system(size:14,weight:.semibold))
+                    Spacer()
+                    Text("VÁŠ PROSTOR PRO MÉDIA").font(.system(size:9,weight:.semibold)).tracking(1.6).foregroundStyle(.secondary)
+                }.padding(.horizontal,30).padding(.vertical,19)
+                ZStack {
+                    MediaWorkspace(youtube:false, incoming:$input, folder:folder, active:route == "scan")
+                        .opacity(route == "scan" ? 1 : 0).allowsHitTesting(route == "scan").accessibilityHidden(route != "scan")
+                    MediaWorkspace(youtube:true, incoming:.constant(""), folder:folder, active:route == "youtube")
+                        .opacity(route == "youtube" ? 1 : 0).allowsHitTesting(route == "youtube").accessibilityHidden(route != "youtube")
+                    HellspyView(folder: folder, active: route == "hellspy")
+                        .opacity(route == "hellspy" ? 1 : 0).allowsHitTesting(route == "hellspy").accessibilityHidden(route != "hellspy")
+                    if route == "queue" { ScrollView { queue.padding(30).frame(maxWidth:1400).frame(maxWidth:.infinity) }.background(background) }
+                    if route == "settings" { ScrollView { settings.padding(30).frame(maxWidth:1000).frame(maxWidth:.infinity) }.background(background) }
+                }
+                if let link = clipboard.candidate {
+                    HStack { Image(systemName:"doc.on.clipboard"); Text(link).lineLimit(1); Spacer(); Button("Použít odkaz") { input = link; route = "scan"; clipboard.candidate = nil }; Button("Zavřít") { clipboard.candidate = nil } }.padding(14).studioCard().padding(16)
+                }
             }
         }
-        .sheet(isPresented:$showSettings) {
-            VStack { HStack { Text("Nastavení").font(.title2.bold()); Spacer(); Button("Hotovo") { showSettings = false } }.padding(); ScrollView { settings.padding(24) } }.frame(width:800,height:680)
+        .buttonStyle(StudioButtonStyle())
+        .groupBoxStyle(StudioGroupBoxStyle())
         .sheet(item:$player) { selected in
             VStack(spacing:0) {
                 HStack { Label("Přehrávač / zdrojová stránka",systemImage:"play.rectangle").font(.headline); Spacer(); Link("Otevřít v Safari",destination:selected.url); Button("Zavřít") { player = nil } }.padding()
                 WebPlayer(url:selected.url).id(selected.id)
                 Text("Přehrávání ovládá zdrojová služba. Přihlášení nebo souhlas se mohou zobrazit přímo v přehrávači.").font(.caption).foregroundStyle(secondaryText).padding(10)
             }.frame(width:1000,height:700)
-        }
-
         }
         .background(background).tint(accent).frame(minWidth:1000,minHeight:720)
         .preferredColorScheme(theme == "dark" ? .dark : theme == "light" ? .light : nil)
@@ -69,7 +75,7 @@ struct StudioView: View {
                 ScrollView { Text(store.jobs.first(where:{$0.id == job.id})?.log ?? job.log).font(.system(.caption,design:.monospaced)).textSelection(.enabled).frame(maxWidth:.infinity,alignment:.leading) }
             }.padding(24).frame(width:780,height:500)
         }
-        .alert("Ultimate Downloader",isPresented:Binding(get:{store.message != nil},set:{if !$0 {store.message = nil}})) { Button("Rozumím") { store.message = nil } } message: { Text(store.message ?? "") }
+        .alert("Encore",isPresented:Binding(get:{store.message != nil},set:{if !$0 {store.message = nil}})) { Button("Rozumím") { store.message = nil } } message: { Text(store.message ?? "") }
         .confirmationDialog("Vymazat historii fronty?", isPresented:$showClearHistoryConfirmation, titleVisibility:.visible) {
             Button("Vymazat pouze záznamy", role:.destructive) { store.clearHistory() }
             Button("Zrušit", role:.cancel) {}
@@ -86,10 +92,7 @@ struct StudioView: View {
         .onReceive(NotificationCenter.default.publisher(for:.init("IncomingMediaURL"))) { note in if let text = note.object as? String { input = text; route = "scan" } }
     }
     private func nav(_ id: String,_ text: String,_ icon: String,badge: Int = 0) -> some View {
-        Button { route = id } label: {
-            HStack { Image(systemName:icon).frame(width:22); Text(text).font(.system(size:13,weight:.medium)); if badge > 0 { Text("\(badge)").font(.caption.bold()).padding(4).background(accent.opacity(0.2),in:Capsule()) } }
-                .padding(12).contentShape(Rectangle()).foregroundStyle(route == id ? accent : .primary).background(route == id ? accent.opacity(0.12) : .clear,in:RoundedRectangle(cornerRadius:10))
-        }.buttonStyle(.plain)
+        StudioRailButton(title:text, icon:icon, serviceImage:id == "youtube" ? "YouTubeService" : id == "hellspy" ? "HellspyService" : nil, selected:route == id, badge:badge) { route = id }
     }
     private var queue: some View {
         VStack(alignment:.leading,spacing:20) {
@@ -118,14 +121,14 @@ struct StudioView: View {
                     }
                     Text(job.detail).font(.caption).foregroundStyle(secondaryText)
                     HStack { Text(job.created,style:.date).font(.caption2).foregroundStyle(tertiaryText); Spacer(); Button("Protokol") { logJob = job }; if job.state == .running || job.state == .queued { Button("Zrušit") { store.cancel(job.id) } } else { Button("Znovu") { store.retry(job) }; Button("Odebrat", systemImage:"trash", role:.destructive) { store.removeFromHistory(job.id) }.help("Odebere pouze záznam z historie. Stažený soubor zůstane zachovaný.") }; Button("Finder") { let urls = job.files.filter { FileManager.default.fileExists(atPath:$0) }.map { URL(fileURLWithPath:$0) }; if urls.isEmpty { NSWorkspace.shared.open(URL(fileURLWithPath:job.folder)) } else { NSWorkspace.shared.activateFileViewerSelecting(urls) } } }
-                }.padding(20).background(surface,in:RoundedRectangle(cornerRadius:16))
+                }.padding(22).studioCard()
             }
         }
     }
     private var settings: some View {
         VStack(alignment:.leading,spacing:24) {
-            Text("Váš prostor. Vaše pravidla.").font(.largeTitle.bold())
-            GroupBox("Vzhled") { Picker("Motiv",selection:$theme) { Text("Podle systému").tag("system"); Text("Dark Future").tag("dark"); Text("Světlý").tag("light") }.pickerStyle(.segmented).padding(12) }
+            StudioHeading(title:"Nastavení", subtitle:"Vzhled, ukládání a služby podle vás.")
+            GroupBox("Vzhled") { Picker("Motiv",selection:$theme) { Text("Podle systému").tag("system"); Text("Tmavý").tag("dark"); Text("Světlý").tag("light") }.pickerStyle(.segmented).padding(12) }
             GroupBox("Ukládání") { HStack { Text(folder).lineLimit(2).textSelection(.enabled); Spacer(); Button("Vybrat složku…") { let p = NSOpenPanel(); p.canChooseDirectories = true; p.canChooseFiles = false; p.allowsMultipleSelection = false; if p.runModal() == .OK, let url = p.url { folder = url.path } } }.padding(12) }
             AppPreferencesView()
             GroupBox("Stahovací nástroje") {
@@ -161,12 +164,12 @@ struct StudioView: View {
 
 struct NeonButtonStyle: ButtonStyle {
     @Environment(\.isEnabled) private var enabled
-    @Environment(\.colorScheme) private var scheme
-    func makeBody(configuration:Configuration) -> some View {
-        let fill = scheme == .dark ? neon : Color(red:0.0,green:0.38,blue:0.34)
-        configuration.label.fontWeight(.semibold).padding(.horizontal,15).padding(.vertical,10)
-            .foregroundStyle(enabled ? (scheme == .dark ? Color.black : Color.white) : Color.secondary)
-            .background(enabled ? fill.opacity(configuration.isPressed ? 0.7 : 1) : Color.gray.opacity(0.15),in:RoundedRectangle(cornerRadius:10))
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label.font(.system(size:13,weight:.semibold))
+            .padding(.horizontal,18).padding(.vertical,11)
+            .foregroundStyle(enabled ? Color.white : Color.secondary)
+            .background(enabled ? Color(red:0.0,green:0.32,blue:0.78).opacity(configuration.isPressed ? 0.82 : 1) : Color.primary.opacity(0.09),in:Capsule())
+            .overlay(Capsule().strokeBorder(.white.opacity(enabled ? 0.2 : 0)))
     }
 }
 
@@ -190,13 +193,18 @@ struct MediaWorkspace: View {
         ScrollViewReader { proxy in
         ScrollView {
             VStack(alignment:.leading,spacing:20) {
-                Text(youtube ? "YouTube" : "Stáhnout z odkazu").font(.largeTitle.bold())
-                HStack {
+                if youtube {
+                    StudioServiceHeading(service:"YouTube", subtitle:"Najděte video, pusťte si ho a vyberte podobu stažení.")
+                } else {
+                    StudioHeading(title:"Co si dnes uložíte?", subtitle:"Video, hudba i galerie. Stačí vložit odkaz.")
+                }
+                HStack(spacing:14) {
+                    Image(systemName:youtube ? "magnifyingglass" : "link").font(.title3).foregroundStyle(.secondary)
                     TextField(youtube ? "Hledat na YouTube nebo vložit odkaz…" : "Vložte odkaz na video, hudbu nebo galerii…",text:$query)
-                        .textFieldStyle(.roundedBorder).controlSize(.large).onSubmit { analyze() }
+                        .textFieldStyle(.plain).font(.system(size:15)).onSubmit { analyze() }
                     Button { query = NSPasteboard.general.string(forType:.string) ?? "" } label: { Image(systemName:"doc.on.clipboard") }.help("Vložit ze schránky")
                     Button(explorer.busy ? "Zrušit" : youtube ? "Vyhledat" : "Načíst odkaz") { if explorer.busy { explorer.cancel() } else { analyze() } }.buttonStyle(NeonButtonStyle())
-                }
+                }.padding(10).padding(.leading,8).studioCard()
                 if !youtube { Toggle("Prohledat také obrázky a média na webové stránce",isOn:$scanPage).font(.caption) }
                 HStack { if explorer.busy { ProgressView().controlSize(.small) }; Text(explorer.status).font(.callout).foregroundStyle(.secondary) }
                 if !explorer.diagnostics.isEmpty { DisclosureGroup("Podrobnosti načítání") { Text(explorer.diagnostics).font(.caption.monospaced()).textSelection(.enabled) } }
@@ -213,7 +221,7 @@ struct MediaWorkspace: View {
                     }
                     MediaOptionsView(items:wholePlaylist ? [MediaItem(url:analyzedURL,title:"Celý playlist / album",kind:.video)] : selectedItems,
                                      folder:folder,playlistURL:wholePlaylist ? analyzedURL : nil,embedded:true,loading:explorer.busy)
-                        .background(.background,in:RoundedRectangle(cornerRadius:16)).id("options")
+                        .studioCard().id("options")
                 }
                 if !explorer.items.isEmpty {
                     HStack {
@@ -234,8 +242,8 @@ struct MediaWorkspace: View {
                                     if youtube { Button("Přehrát") { choose(item); playback = URL(string:item.url) } }
                                     Button("Volby stažení") { choose(item) }
                                 }
-                            }.padding(14).background(.background,in:RoundedRectangle(cornerRadius:14))
-                                .overlay(RoundedRectangle(cornerRadius:14).stroke(chosen?.id == item.id || explorer.selected.contains(item.id) ? Color.accentColor : .clear,lineWidth:2))
+                            }.padding(14).studioCard()
+                                .overlay(RoundedRectangle(cornerRadius:18).stroke(chosen?.id == item.id || explorer.selected.contains(item.id) ? Color.accentColor : .clear,lineWidth:2))
                         }
                     }
                 } else if youtube && !explorer.busy {
@@ -264,5 +272,147 @@ struct MediaWorkspace: View {
             let service = youtube ? MediaService.all[0] : MediaService.all.first { $0.gallery }
             explorer.inspect(url,service:service,scanPage:!youtube && scanPage)
         }
+    }
+}
+
+// Shared surfaces keep the workspace, settings and media controls consistent.
+enum StudioColors {
+    static func background(_ scheme: ColorScheme) -> Color {
+        scheme == .dark ? Color(red:0.105,green:0.11,blue:0.12) : Color(red:0.95,green:0.955,blue:0.965)
+    }
+    static func surface(_ scheme: ColorScheme) -> Color {
+        scheme == .dark ? Color(red:0.15,green:0.155,blue:0.17) : .white
+    }
+}
+private struct StudioCard: ViewModifier {
+    @Environment(\.colorScheme) private var scheme
+    func body(content: Content) -> some View {
+        content.background(StudioColors.surface(scheme),in:RoundedRectangle(cornerRadius:18))
+            .overlay(RoundedRectangle(cornerRadius:18).strokeBorder(Color.primary.opacity(scheme == .dark ? 0.075 : 0.055)))
+    }
+}
+extension View {
+    func studioCard() -> some View { modifier(StudioCard()) }
+}
+struct StudioHeading: View {
+    let title: String
+    let subtitle: String
+    var body: some View {
+        VStack(alignment:.leading,spacing:9) {
+            Text(title).font(.system(size:30,weight:.bold,design:.rounded))
+            Text(subtitle).font(.system(size:14)).foregroundStyle(.secondary)
+        }.padding(.bottom,10)
+    }
+}
+struct StudioButtonStyle: ButtonStyle {
+    @Environment(\.isEnabled) private var enabled
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label.font(.system(size:12,weight:.medium))
+            .padding(.horizontal,13).padding(.vertical,8)
+            .foregroundStyle(enabled ? Color.primary : Color.secondary)
+            .modifier(StudioGlassControl(active:configuration.isPressed, enabled:enabled))
+    }
+}
+
+// Use the native material when available and retain legibility with accessibility settings.
+struct StudioGlassControl: ViewModifier {
+    var active = false
+    var enabled = true
+    @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
+    @Environment(\.colorSchemeContrast) private var contrast
+    @Environment(\.colorScheme) private var scheme
+    @ViewBuilder func body(content: Content) -> some View {
+        if reduceTransparency || contrast == .increased {
+            content.background(StudioColors.surface(scheme),in:RoundedRectangle(cornerRadius:14))
+                .overlay(RoundedRectangle(cornerRadius:14).strokeBorder(Color.primary.opacity(active ? 0.7 : 0.35)))
+        } else if #available(macOS 26.0, *) {
+            content.glassEffect(.regular.interactive(enabled),in:RoundedRectangle(cornerRadius:14))
+                .overlay(RoundedRectangle(cornerRadius:14).fill(Color.primary.opacity(active ? 0.08 : 0)))
+        } else {
+            content.background(.regularMaterial,in:RoundedRectangle(cornerRadius:14))
+                .overlay(RoundedRectangle(cornerRadius:14).strokeBorder(Color.primary.opacity(active ? 0.25 : 0.13)))
+        }
+    }
+}
+struct StudioGroupBoxStyle: GroupBoxStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        VStack(alignment:.leading,spacing:12) {
+            configuration.label.font(.system(size:13,weight:.semibold)).foregroundStyle(.secondary)
+            configuration.content.frame(maxWidth:.infinity,alignment:.leading)
+        }.padding(18).studioCard()
+    }
+}
+struct StudioRailButton: View {
+    let title: String
+    let icon: String
+    var serviceImage: String? = nil
+    let selected: Bool
+    var badge: Int = 0
+    let action: () -> Void
+    @State private var hovering = false
+    var body: some View {
+        Button(action:action) {
+            Group {
+                if let serviceImage, let image = StudioServiceImages.images[serviceImage] {
+                    Image(nsImage:image).resizable().renderingMode(.original).interpolation(.high).scaledToFit().frame(width:28,height:28)
+                } else {
+                    Image(systemName:icon).font(.system(size:21,weight:.medium))
+                }
+            }
+                .frame(width:48,height:48)
+                .foregroundStyle(Color.primary)
+                .modifier(StudioGlassControl(active:selected || hovering))
+                .overlay(alignment:.leading) {
+                    if selected { Capsule().fill(Color.accentColor).frame(width:3,height:20).offset(x:-10) }
+                }
+                .overlay(alignment:.topTrailing) {
+                    if badge > 0 {
+                        Text(badge > 99 ? "99+" : "\(badge)").font(.system(size:9,weight:.bold))
+                            .foregroundStyle(.white).padding(4).background(Color(red:0,green:0.32,blue:0.78),in:Capsule()).offset(x:3,y:-3)
+                    }
+                }
+        }.buttonStyle(.plain).help(title).accessibilityLabel(title)
+            .accessibilityAddTraits(selected ? .isSelected : [])
+            .onHover { hovering = $0 }
+    }
+}
+
+// These PNGs are bundle resources, not asset-catalog image sets. Load by exact URL.
+private enum StudioServiceImages {
+    static let images: [String:NSImage] = {
+        var images: [String:NSImage] = [:]
+        for name in ["EncoreIcon", "YouTubeService", "HellspyService", "YouTubeWordmarkDark", "YouTubeWordmarkLight", "HellspyWordmark"] {
+            if let url = Bundle.main.url(forResource:name, withExtension:"png"),
+               let image = NSImage(contentsOf:url) {
+                image.isTemplate = false
+                images[name] = image
+            }
+        }
+        return images
+    }()
+}
+
+struct StudioServiceHeading: View {
+    let service: String
+    let subtitle: String
+    @Environment(\.colorScheme) private var scheme
+    private var resource: String {
+        service == "YouTube" ? (scheme == .dark ? "YouTubeWordmarkDark" : "YouTubeWordmarkLight") : "HellspyWordmark"
+    }
+    var body: some View {
+        VStack(alignment:.leading,spacing:14) {
+            Group {
+                if let image = StudioServiceImages.images[resource] {
+                    Image(nsImage:image).resizable().renderingMode(.original).interpolation(.high)
+                        .scaledToFit().frame(width:service == "YouTube" ? 220 : 150,height:service == "YouTube" ? 74 : 40,alignment:.leading)
+                } else {
+                    Text(service).font(.system(size:30,weight:.bold))
+                }
+            }
+            .padding(service == "Hellspy" ? 12 : 0)
+            .background(service == "Hellspy" ? Color(red:0.08,green:0.08,blue:0.09) : .clear,in:RoundedRectangle(cornerRadius:12))
+            .accessibilityLabel(service)
+            Text(subtitle).font(.system(size:14)).foregroundStyle(.secondary)
+        }.frame(maxWidth:.infinity,alignment:.leading).padding(.bottom,10)
     }
 }

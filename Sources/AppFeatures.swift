@@ -45,7 +45,7 @@ import UserNotifications
     }
     func test() {
         let content = UNMutableNotificationContent()
-        content.title = "Ultimate Downloader Pro"
+        content.title = "Encore"
         content.body = "Oznámení fungují. Tady vás upozorníme na dokončení nebo chybu stahování."
         content.sound = .default
         UNUserNotificationCenter.current().add(.init(identifier: UUID().uuidString, content: content, trigger: nil))
@@ -84,10 +84,10 @@ struct DeveloperInfoView: View {
             if let url = Bundle.main.url(forResource: "DeveloperPhoto", withExtension: "jpg"), let photo = NSImage(contentsOf: url) {
                 Image(nsImage: photo).resizable().scaledToFill().frame(width: 100, height: 100).clipShape(Circle())
             }
-            Text("Ultimate Downloader Pro · Beta \(Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "—") (\(Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "—"))").font(.title3.bold())
+            Text("Encore · Beta \(Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "—") (\(Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "—"))").font(.title3.bold())
             Text("Vývojář: Marian Čonka")
             Link("GitHub: conkamarian1987", destination: URL(string: "https://github.com/conkamarian1987")!)
-        }.frame(maxWidth: .infinity).padding(20).tint(.teal)
+        }.frame(maxWidth: .infinity).padding(20).tint(.blue)
     }
 }
 @MainActor final class AboutWindow {
@@ -96,7 +96,7 @@ struct DeveloperInfoView: View {
     func show() {
         if window == nil {
             let w = NSWindow(contentRect: NSRect(x: 0, y: 0, width: 430, height: 320), styleMask: [.titled, .closable], backing: .buffered, defer: false)
-            w.title = "O aplikaci Ultimate Downloader Pro"
+            w.title = "O aplikaci Encore"
             w.contentView = NSHostingView(rootView: DeveloperInfoView())
             w.isReleasedWhenClosed = false; w.center(); window = w
         }
@@ -243,8 +243,8 @@ struct RequiredUpdateView: View {
     @EnvironmentObject private var updates: AppUpdates
     var body: some View {
         VStack(spacing: 22) {
-            Image(systemName: "arrow.down.circle").font(.system(size: 52)).foregroundStyle(.teal)
-            Text("Ultimate Downloader Pro").font(.largeTitle.bold())
+            Image(systemName: "arrow.down.circle").font(.system(size: 52)).foregroundStyle(.blue)
+            Text("Encore").font(.largeTitle.bold())
             Text("Před spuštěním je nutné ověřit aktuální verzi.").font(.title3)
             Text(updates.status).multilineTextAlignment(.center).textSelection(.enabled)
             if let progress = updates.progress { ProgressView(value: progress) }

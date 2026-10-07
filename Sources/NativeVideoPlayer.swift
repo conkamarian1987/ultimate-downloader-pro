@@ -10,7 +10,7 @@ final class DisplayWakeLock {
     func setActive(_ enabled: Bool) {
         guard enabled != active else { return }
         if enabled {
-            let result = IOPMAssertionCreateWithName(kIOPMAssertionTypePreventUserIdleDisplaySleep as CFString, IOPMAssertionLevel(kIOPMAssertionLevelOn), "Ultimate Downloader Pro – přehrávání videa" as CFString, &assertion)
+            let result = IOPMAssertionCreateWithName(kIOPMAssertionTypePreventUserIdleDisplaySleep as CFString, IOPMAssertionLevel(kIOPMAssertionLevelOn), "Encore – přehrávání videa" as CFString, &assertion)
             active = result == kIOReturnSuccess
         } else {
             IOPMAssertionRelease(assertion); active = false; assertion = 0
@@ -219,13 +219,14 @@ struct NativePlayerView: View {
                     if player.isFullscreen {
                         Button("Vrátit video z celé obrazovky") { player.closeFullscreen() }.frame(height: 240)
                     } else {
-                        VLCOutput(player: player, fullscreenMode: false).frame(minHeight: 240, idealHeight: 330, maxHeight: 450).background(.black)
+                        VLCOutput(player: player, fullscreenMode: false).frame(minHeight: 240, idealHeight: 330, maxHeight: 450).background(.black).clipShape(RoundedRectangle(cornerRadius:12))
                     }
                     if !player.status.isEmpty { Text(player.status).font(.caption).foregroundStyle(.secondary) }
                     controls
                 }
             }
         }
+        .buttonStyle(StudioButtonStyle())
         .onChange(of: showOptions) { _, value in player.controlsInteraction = value; player.userActivity() }
     }
     private var header: some View {

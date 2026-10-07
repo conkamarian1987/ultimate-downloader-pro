@@ -16,7 +16,7 @@ def main():
     if not info.get('SUPublicEDKey'): raise SystemExit('Missing public key in app')
     subprocess.run(['codesign','--verify','--deep','--strict',str(args.app)],check=True)
     args.output.mkdir(parents=True, exist_ok=True)
-    archive = args.output/f'UltimateDownloaderPro-{version}.zip'
+    archive = args.output/f'Encore-{version}.zip'
     if archive.exists(): raise SystemExit('Refusing to overwrite an existing release archive')
     subprocess.run(['ditto','-c','-k','--sequesterRsrc','--keepParent',str(args.app),str(archive)],check=True)
     signature = subprocess.check_output([str(args.sign_tool),'--ed-key-file',str(args.key),'-p',str(archive)],text=True).strip()

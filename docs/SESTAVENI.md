@@ -15,6 +15,8 @@ Nejdříve spusťte `python3 Tools/setup_sparkle.py` a `python3 Tools/setup_vlck
 3. Jako cíl zvolte **My Mac**.
 4. Spusťte sestavení nebo aplikaci.
 
+Výsledkem je `Encore.app`; název projektu a schématu zůstává kvůli návaznosti `UltimateDownloader`. Pro oficiální aktualizační vydání zachovejte původní bundle ID a podpisový klíč.
+
 Projekt obsahuje hlavní aplikaci a rozšíření **Share**. Pro vlastní distribuci nastavte vlastní podpisový tým a identifikátory balíčku.
 
 ## Příkazová řádka

@@ -45,7 +45,7 @@ struct MediaOptionsView: View {
     }
     private var panel: some View {
         VStack(alignment:.leading,spacing:20) {
-            HStack { VStack(alignment:.leading,spacing:6) { Text(items.count == 1 ? "Přesně podle vás." : "Uložit \(items.count) položek").font(.title.bold()); Text(current?.title ?? "Vložte odkaz a načtěte dostupná média").foregroundStyle(.secondary).lineLimit(2) }; Spacer(); if !embedded { Button("Zavřít") { details.cancel(); dismiss() } } }
+            HStack { VStack(alignment:.leading,spacing:6) { Text(items.count == 1 ? "Volby stažení" : "Uložit \(items.count) položek").font(.title.bold()); Text(current?.title ?? "Vložte odkaz a načtěte dostupná média").foregroundStyle(.secondary).lineLimit(2) }; Spacer(); if !embedded { Button("Zavřít") { details.cancel(); dismiss() } } }
             Group {
                 VStack(alignment:.leading,spacing:20) {
                     DisclosureGroup("Oblíbené profily") {
@@ -85,7 +85,7 @@ struct MediaOptionsView: View {
                                     Picker("Titulky jako SRT",selection:$subtitle) { Text("Bez titulků").tag("none"); ForEach(languages,id:\.self) { Text($0).tag($0) } }
                                 }
                                 Text(output == "audio" ? "Převod nemůže zvýšit kvalitu zdrojového zvuku. Datový tok je cílová hodnota." : "Kvalita je horní limit. Stopy se nepřepočítávají na vyšší rozlišení. MP4 se ověří a podle potřeby převede na H.264 / AAC pro přehrávač Apple. Převod může trvat déle. MKV a WebM zachovávají kodeky zdroje.").font(.caption).foregroundStyle(.secondary)
-                                if variants.isEmpty && !details.busy { Text("Zdroj neposkytl seznam variant. Použije se zvolený profil; u přímých souborů bez údajů o rozlišení zvolte nejvyšší dostupnou kvalitu.").font(.caption).foregroundStyle(.orange) }
+                                if !items.isEmpty && variants.isEmpty && !details.busy { Text("Zdroj neposkytl seznam variant. Použije se zvolený profil; u přímých souborů bez údajů o rozlišení zvolte nejvyšší dostupnou kvalitu.").font(.caption).foregroundStyle(.orange) }
                             }.padding(12)
                         }
                     }

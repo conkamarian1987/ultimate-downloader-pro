@@ -1,13 +1,14 @@
 <?xml version='1.0' encoding='utf-8'?>
 <rss xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" version="2.0">
   <channel>
-    <title>Ultimate Downloader Pro</title>
+    <title>Encore</title>
     <item>
-      <title>0.7.1</title>
-      <sparkle:version>12</sparkle:version>
-      <sparkle:shortVersionString>0.7.1</sparkle:shortVersionString>
+      <title>Encore 0.8.0 — Ultimate Downloader Pro se mění na Encore</title>
+      <sparkle:version>13</sparkle:version>
+      <sparkle:shortVersionString>0.8.0</sparkle:shortVersionString>
       <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-      <enclosure url="https://raw.githubusercontent.com/conkamarian1987/ultimate-downloader-pro/main/instalace/UltimateDownloaderPro-0.7.1.zip" length="36821526" type="application/octet-stream" sparkle:edSignature="68pSTwW6Osl8DGwMsGE5mb2FwyPk1d3xRSU9nQWjCgd0TIthUAS8JGkMq8Ao01fDMh1BOPz+8FnLwNk1q8GlCg==" />
+      <enclosure url="https://raw.githubusercontent.com/conkamarian1987/ultimate-downloader-pro/main/instalace/Encore-0.8.0.zip" length="39019434" type="application/octet-stream" sparkle:edSignature="dYVqwGVV2xnHcZiX/L16IvGzIBHkhCPnwrTkckGEnGxZRB7fHIaF1Mlrke2uRO2t0r2d4d/ZpF96RfR4YnyGAA==" />
+      <description>Ultimate Downloader Pro se mění na Encore. Nová ikona, levý panel a Liquid Glass. Aktualizace nahradí původní aplikaci a zachová historii i nastavení.</description>
     </item>
   </channel>
 </rss>

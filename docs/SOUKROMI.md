@@ -1,6 +1,6 @@
 # Ochrana soukromí
 
-Ultimate Downloader Pro ukládá nastavení, historii úloh a oblíbené profily lokálně na Macu. Aplikace nemá vlastní analytickou službu ani uživatelský účet.
+Encore (dříve Ultimate Downloader Pro) ukládá nastavení, historii úloh a oblíbené profily lokálně na Macu. Aplikace nemá vlastní analytickou službu ani uživatelský účet.
 
 ## Síťová komunikace
 

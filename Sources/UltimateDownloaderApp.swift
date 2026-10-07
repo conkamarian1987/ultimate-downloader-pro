@@ -13,10 +13,10 @@ import UserNotifications
                 else { RequiredUpdateView() }
             }.environmentObject(store).environmentObject(updates)
                 .onAppear { delegate.store = store; delegate.updates = updates; updates.connect(to: store) }
-        }.defaultSize(width: 1220, height: 820)
+        }.windowStyle(.hiddenTitleBar).defaultSize(width: 1280, height: 840)
         .commands {
             CommandGroup(replacing: .appInfo) {
-                Button("O Ultimate Downloader Pro") { AboutWindow.shared.show() }
+                Button("O Encore") { AboutWindow.shared.show() }
             }
         }
     }
